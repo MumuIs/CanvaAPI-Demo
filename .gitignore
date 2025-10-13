@@ -28,4 +28,7 @@ ENV/
 .env.*
 !.env.example
 
+# Backups
+backups/
+
 
