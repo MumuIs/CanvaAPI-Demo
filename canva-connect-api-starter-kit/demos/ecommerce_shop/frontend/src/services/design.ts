@@ -79,4 +79,25 @@ export class Designs {
 
     return { design: design.data.design };
   }
+
+  async createDesignFromAsset({
+    assetId,
+    title,
+  }: {
+    assetId: string;
+    title?: string;
+  }): Promise<{ design: Design }> {
+    const result = await DesignService.createDesign({
+      client: this.client,
+      body: {
+        asset_id: assetId,
+        ...(title ? { title } : {}),
+      },
+    });
+    if (result.error) {
+      console.error(result.error);
+      throw new Error(result.error.message);
+    }
+    return { design: result.data.design };
+  }
 }

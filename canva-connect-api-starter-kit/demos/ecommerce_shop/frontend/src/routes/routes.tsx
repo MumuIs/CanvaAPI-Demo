@@ -11,6 +11,7 @@ import {
   BrandTemplateCreatorPage,
   BrandTemplateTestPage,
   UploadsPage,
+  ContentLibraryPage,
 } from "src/pages";
 import { App } from "../app";
 
@@ -24,6 +25,7 @@ export enum Paths {
   BRAND_TEMPLATES = "/brand-templates",
   BRAND_TEMPLATES_TEST = "/brand-templates/test",
   UPLOADS = "/uploads",
+  CONTENT_LIBRARY = "/content-library",
 }
 
 export const routes: RouteObject[] = [
@@ -63,6 +65,10 @@ export const routes: RouteObject[] = [
       {
         path: Paths.UPLOADS,
         element: <UploadsPage />,
+      },
+      {
+        path: Paths.CONTENT_LIBRARY,
+        element: <ContentLibraryPage />,
       },
       {
         path: Paths.MULTIPLE_DESIGNS_GENERATOR,

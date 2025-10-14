@@ -41,19 +41,13 @@ export const SideBar = () => {
       disabled: false,
     },
     {
-      text: "素材上传",
-      Icon: UploadFileIcon,
-      route: "/uploads", // 临时路由占位，前端页面承载上传
-      disabled: !isAuthorized,
-    },
-    {
       text: "商品",
       Icon: ShoppingCartIcon,
       route: Paths.PRODUCTS,
       disabled: !isAuthorized,
     },
     {
-      text: "市场营销",
+      text: "营销",
       Icon: SendIcon,
       route: Paths.MARKETING,
       disabled: !isAuthorized,
@@ -70,6 +64,18 @@ export const SideBar = () => {
       route: Paths.BRAND_TEMPLATES_TEST,
       disabled: !isAuthorized,
       isDemo: true,
+    },
+    {
+      text: "素材上传",
+      Icon: UploadFileIcon,
+      route: Paths.UPLOADS,
+      disabled: !isAuthorized,
+    },
+    {
+      text: "内容库",
+      Icon: InboxIcon,
+      route: Paths.CONTENT_LIBRARY,
+      disabled: !isAuthorized,
     },
     {
       text: "上传",
