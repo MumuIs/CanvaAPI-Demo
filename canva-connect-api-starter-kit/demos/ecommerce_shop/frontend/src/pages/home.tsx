@@ -12,7 +12,7 @@ export const HomePage = () => {
   return (
     <>
       <Typography variant="h4" gutterBottom={true}>
-        {displayName ? `你好，${displayName}！` : `你好！`}
+        {displayName ? `Good day, ${displayName}!` : `Good day!`}
       </Typography>
       <HomeTiles />
     </>
@@ -70,8 +70,8 @@ const HomeTiles = () => (
     <Grid item={true} xs={8}>
       <InfoPaper
         icon={<BarChart />}
-        label="今年"
-        title="销售概览"
+        label="This year"
+        title="Sales summary"
         Content={<DemoSalesChart />}
       />
     </Grid>
@@ -100,15 +100,11 @@ const InfoPaper = ({
   Content: React.ReactNode;
 }) => (
   <Paper
-    elevation={0}
     sx={{
       paddingX: 4,
-      paddingY: 3,
+      paddingY: 2,
       flexGrow: 1,
       height: "100%",
-      borderRadius: 2,
-      border: (theme) => `1px solid ${theme.palette.divider}`,
-      backgroundColor: (theme) => theme.palette.background.paper,
     }}
   >
     <Box display="flex" justifyContent="space-between" marginBottom={3}>
@@ -117,7 +113,7 @@ const InfoPaper = ({
         <Typography>{label}</Typography>
       </Box>
     </Box>
-    <Typography variant="h6" marginBottom={3} fontWeight={700}>
+    <Typography variant="h6" marginBottom={3}>
       {title}
     </Typography>
     {Content}
