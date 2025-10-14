@@ -149,8 +149,8 @@ export const ConnectToCanvaCta = () => {
           flexDirection: "column",
         }}
       >
-        <Typography variant="h6" align="center" gutterBottom={true}>
-          Connect to Canva
+        <Typography variant="h6" align="center" gutterBottom={true} fontWeight={700}>
+          连接 Canva
         </Typography>
         <Box paddingY={6}>
           <Typography

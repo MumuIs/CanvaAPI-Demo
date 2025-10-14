@@ -68,6 +68,8 @@ export const SideBar = () => {
     },
   ];
 
+  const isActive = (path: string) => location.hash.replace('#','') === path || (location.hash === '' && path === Paths.HOME);
+
   return (
     <Drawer
       variant="permanent"
@@ -95,9 +97,17 @@ export const SideBar = () => {
                 <ListItemButton
                   disabled={disabled}
                   onClick={() => navigate(route)}
+                  sx={{
+                    mx: 1,
+                    my: 0.5,
+                    borderRadius: 2,
+                    backgroundColor: isActive(route)
+                      ? theme.palette.secondary.backgroundBase
+                      : "transparent",
+                  }}
                 >
                   <ListItemIcon>
-                    <Icon color="primary" />
+                    <Icon color={isActive(route) ? "secondary" : "primary"} />
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>

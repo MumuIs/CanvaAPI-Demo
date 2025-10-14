@@ -1,4 +1,4 @@
-import { AppBar, Container, Link, Toolbar, Box, Typography } from "@mui/material";
+import { AppBar, Container, Link, Toolbar, Box, Typography, Chip } from "@mui/material";
 import { CanvaIcon } from "./canva-icon";
 
 export const NavBar = () => (
@@ -24,6 +24,17 @@ export const NavBar = () => (
             >
               Canva Enterprise
             </Typography>
+            <Chip
+              label="Connect API 演示"
+              size="small"
+              sx={{
+                ml: 2,
+                borderRadius: 999,
+                color: (t) => t.palette.secondary.main,
+                borderColor: (t) => t.palette.secondary.main,
+              }}
+              variant="outlined"
+            />
           </Box>
         </Link>
       </Toolbar>
