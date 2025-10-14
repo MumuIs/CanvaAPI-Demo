@@ -76,7 +76,7 @@ export const ConnectButton = () => {
       onClick={onRevokeClick}
       fullWidth={true}
     >
-      断开 Canva 企业版
+      断开 Canva
     </DemoButton>
   ) : (
     <DemoButton
@@ -86,7 +86,7 @@ export const ConnectButton = () => {
       loading={isLoading}
       fullWidth={true}
     >
-      连接 Canva 企业版
+      连接 Canva
     </DemoButton>
   );
 };

@@ -12,8 +12,16 @@ export const HomePage = () => {
   return (
     <>
       <Typography variant="h4" gutterBottom={true}>
-        {displayName ? `Good day, ${displayName}!` : `Good day!`}
+        {displayName ? `您好，${displayName}！` : `您好！`}
       </Typography>
+      <Box mb={2}>
+        <Typography variant="body2" color="text.secondary" paragraph={true}>
+          这是一个完整的电商平台演示，展示了如何使用 Canva Connect API 将设计能力集成到您的应用中。通过本演示，您可以体验资产上传、设计创建、品牌模板使用等核心功能。
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          建议先查看“API 概览”页面了解所有可用的 API 功能。
+        </Typography>
+      </Box>
       <HomeTiles />
     </>
   );
@@ -70,8 +78,8 @@ const HomeTiles = () => (
     <Grid item={true} xs={8}>
       <InfoPaper
         icon={<BarChart />}
-        label="This year"
-        title="Sales summary"
+        label="今年"
+        title="销售汇总"
         Content={<DemoSalesChart />}
       />
     </Grid>
