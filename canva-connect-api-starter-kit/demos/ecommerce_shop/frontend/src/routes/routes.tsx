@@ -10,6 +10,7 @@ import {
   SingleDesignGeneratorPage,
   BrandTemplateCreatorPage,
   BrandTemplateTestPage,
+  UploadsPage,
 } from "src/pages";
 import { App } from "../app";
 
@@ -22,6 +23,7 @@ export enum Paths {
   SINGLE_DESIGN_GENERATOR = "/marketing/single-design",
   BRAND_TEMPLATES = "/brand-templates",
   BRAND_TEMPLATES_TEST = "/brand-templates/test",
+  UPLOADS = "/uploads",
 }
 
 export const routes: RouteObject[] = [
@@ -57,6 +59,10 @@ export const routes: RouteObject[] = [
       {
         path: Paths.BRAND_TEMPLATES_TEST,
         element: <BrandTemplateTestPage />,
+      },
+      {
+        path: Paths.UPLOADS,
+        element: <UploadsPage />,
       },
       {
         path: Paths.MULTIPLE_DESIGNS_GENERATOR,

@@ -60,6 +60,27 @@ export class Assets {
   }
 
   /**
+   * Uploads an asset from a File/Blob directly.
+   */
+  async uploadAssetBlob({
+    name,
+    file,
+  }: {
+    name: string;
+    file: Blob;
+  }): Promise<Asset> {
+    const result = await this.createAssetUpload({ image: file, name });
+    if (!result) throw new Error(`Upload asset blob failed for "${name}".`);
+    const asset = await this.pollAssetUpload(result.job.id);
+    if (!asset) {
+      throw new Error(
+        `Asset upload for "${name}" with job id "${result.job.id}" was unsuccessful`,
+      );
+    }
+    return asset;
+  }
+
+  /**
    * Polls an asset upload job until it's completed
    *
    * @param {string} jobId - The id of the asset upload job.

@@ -7,3 +7,4 @@ export * from "./return-nav";
 export * from "./single-design-generator";
 export { default as BrandTemplateCreatorPage } from "./brand-template-creator";
 export { default as BrandTemplateTestPage } from "./brand-template-test";
+export { default as UploadsPage } from "./uploads";

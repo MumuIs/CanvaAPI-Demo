@@ -36,7 +36,7 @@ const placeholderStats: {
 }[] = [
   {
     icon: <ShoppingCartOutlinedIcon />,
-    title: "弃单数",
+    title: "待处理订单",
     label: "本周",
     number: 20,
     changePct: 0.1,

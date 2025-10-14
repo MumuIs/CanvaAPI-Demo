@@ -41,6 +41,12 @@ export const SideBar = () => {
       disabled: false,
     },
     {
+      text: "素材上传",
+      Icon: UploadFileIcon,
+      route: "/uploads", // 临时路由占位，前端页面承载上传
+      disabled: !isAuthorized,
+    },
+    {
       text: "商品",
       Icon: ShoppingCartIcon,
       route: Paths.PRODUCTS,
