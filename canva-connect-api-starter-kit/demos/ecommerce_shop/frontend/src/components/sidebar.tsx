@@ -71,20 +71,7 @@ export const SideBar = () => {
       route: Paths.CONTENT_LIBRARY,
       disabled: !isAuthorized,
     },
-    {
-      text: "上传",
-      Icon: UploadFileIcon,
-      route: Paths.HOME,
-      disabled: true,
-      isDemo: true,
-    },
-    {
-      text: "订单",
-      Icon: InboxIcon,
-      route: Paths.HOME,
-      disabled: true,
-      isDemo: true,
-    },
+    
   ];
 
   const isActive = (path: string) => location.hash.replace('#','') === path || (location.hash === '' && path === Paths.HOME);
