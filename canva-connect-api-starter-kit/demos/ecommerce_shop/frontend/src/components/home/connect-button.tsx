@@ -75,6 +75,7 @@ export const ConnectButton = () => {
       startIcon={<LinkOffIcon />}
       onClick={onRevokeClick}
       fullWidth={true}
+      sx={{ borderRadius: 2, py: 1.25 }}
     >
       断开 Canva
     </DemoButton>
@@ -85,6 +86,7 @@ export const ConnectButton = () => {
       onClick={onConnectClick}
       loading={isLoading}
       fullWidth={true}
+      sx={{ borderRadius: 2, py: 1.25 }}
     >
       连接 Canva
     </DemoButton>

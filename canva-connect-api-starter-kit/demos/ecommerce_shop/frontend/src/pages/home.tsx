@@ -113,6 +113,10 @@ const InfoPaper = ({
       paddingY: 2,
       flexGrow: 1,
       height: "100%",
+      borderRadius: 2,
+      border: (t) => `1px solid ${t.palette.divider}`,
+      boxShadow: (t) => `0 1px 2px rgba(16,24,40,0.04)`,
+      backgroundColor: (t) => t.palette.background.paper,
     }}
   >
     <Box display="flex" justifyContent="space-between" marginBottom={3}>
