@@ -100,11 +100,15 @@ const InfoPaper = ({
   Content: React.ReactNode;
 }) => (
   <Paper
+    elevation={0}
     sx={{
       paddingX: 4,
-      paddingY: 2,
+      paddingY: 3,
       flexGrow: 1,
       height: "100%",
+      borderRadius: 2,
+      border: (theme) => `1px solid ${theme.palette.divider}`,
+      backgroundColor: (theme) => theme.palette.background.paper,
     }}
   >
     <Box display="flex" justifyContent="space-between" marginBottom={3}>
@@ -113,7 +117,7 @@ const InfoPaper = ({
         <Typography>{label}</Typography>
       </Box>
     </Box>
-    <Typography variant="h6" marginBottom={3}>
+    <Typography variant="h6" marginBottom={3} fontWeight={700}>
       {title}
     </Typography>
     {Content}
