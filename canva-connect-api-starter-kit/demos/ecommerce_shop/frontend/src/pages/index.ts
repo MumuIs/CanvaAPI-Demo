@@ -5,4 +5,4 @@ export * from "./multiple-designs-generator";
 export * from "./products";
 export * from "./return-nav";
 export * from "./single-design-generator";
-export * from "./brand-template-creator";
+export { default as BrandTemplateCreatorPage } from "./brand-template-creator";
