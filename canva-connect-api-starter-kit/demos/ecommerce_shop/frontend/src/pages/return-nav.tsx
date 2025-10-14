@@ -25,20 +25,19 @@ import { decodeCorrelationState } from "src/services/canva-return";
 
 const STEPS = [
   {
-    label: "Kick off return to Nourish.",
-    description:
-      "Starting return processing, reading query parameters, parsing correlation state.",
+    label: "开始回跳处理",
+    description: "读取查询参数，解析 correlation_state。",
   },
   {
-    label: "Fetch updated design.",
-    description: "Fetching the updated design from Canva.",
+    label: "获取更新后的设计",
+    description: "从 Canva 获取最新设计。",
   },
   {
-    label: "Export updated design.",
-    description: "Exporting a high-res updated design from Canva.",
+    label: "导出更新后的设计",
+    description: "从 Canva 导出高清设计。",
   },
   {
-    label: "Return to starting page.",
+    label: "返回起始页面",
     description: "",
   },
 ];
@@ -135,7 +134,7 @@ export const ReturnNavPage = (): JSX.Element => {
     if (!designId || !correlationStateStr) {
       addAlert({
         title:
-          "Unable to process return (design or correlation_state undetected).",
+          "无法处理回跳（未检测到 design 或 correlation_state）。",
         variant: "error",
         hideAfterMs: 6000,
       });
@@ -147,9 +146,7 @@ export const ReturnNavPage = (): JSX.Element => {
     return (
       <Box padding={12}>
         <NavBar />
-        <Typography variant="h3">
-          Something went wrong processing the return.
-        </Typography>
+          <Typography variant="h3">处理回跳时发生错误。</Typography>
       </Box>
     );
   }
@@ -198,7 +195,7 @@ export const ReturnNavPage = (): JSX.Element => {
          */
         case EditInCanvaPageOrigins.PRODUCT: {
           addAlert({
-            title: `Edits to ${fetchDesignResult.design.title ?? "Product"} were saved!`,
+            title: `${fetchDesignResult.design.title ?? "商品"} 的修改已保存！`,
             variant: "success",
             hideAfterMs: 6000,
           });
@@ -224,7 +221,7 @@ export const ReturnNavPage = (): JSX.Element => {
             thumbnail: { url: downloadedExportUrl, width: 1000, height: 1000 },
           });
           addAlert({
-            title: `Edits to ${fetchDesignResult.design.title ?? "Campaign"} were saved!`,
+            title: `${fetchDesignResult.design.title ?? "营销活动"} 的修改已保存！`,
             variant: "success",
             hideAfterMs: 6000,
           });
@@ -241,7 +238,7 @@ export const ReturnNavPage = (): JSX.Element => {
          */
         case EditInCanvaPageOrigins.MARKETING_MULTI: {
           if (!parsedCorrelationState.originMarketingMultiDesignIds) {
-            throw new Error("Unable to fetch designs for multi-design return.");
+            throw new Error("无法获取多设计回跳的设计详情。");
           }
 
           const getProductsResult = await getProducts();
@@ -257,7 +254,7 @@ export const ReturnNavPage = (): JSX.Element => {
           const results = await Promise.allSettled(designPromises);
 
           if (results.every((result) => result.status !== "fulfilled")) {
-            throw new Error("Something went fetching the designs.");
+            throw new Error("获取设计时出现问题。");
           }
 
           results.forEach((result) => {
@@ -278,7 +275,7 @@ export const ReturnNavPage = (): JSX.Element => {
           });
 
           addAlert({
-            title: `Edits to ${fetchDesignResult.design.title ?? "Campaign"} were saved!`,
+            title: `${fetchDesignResult.design.title ?? "营销活动"} 的修改已保存！`,
             variant: "success",
             hideAfterMs: 6000,
           });
@@ -286,7 +283,7 @@ export const ReturnNavPage = (): JSX.Element => {
         }
 
         default: {
-          throw new Error("Undetected Edit in Canva starting origin.");
+          throw new Error("未识别的 Canva 编辑起始来源。");
         }
       }
 
@@ -302,7 +299,7 @@ export const ReturnNavPage = (): JSX.Element => {
     } catch (error) {
       console.error(error);
       addAlert({
-        title: "Something went wrong processing the updated design.",
+        title: "处理更新后的设计时发生错误。",
         variant: "error",
       });
       navigate(parsedCorrelationState?.originPage ?? Paths.HOME);
@@ -327,9 +324,7 @@ export const ReturnNavPage = (): JSX.Element => {
       <NavBar />
       <Box sx={{ width: 600 }} paddingY={8} paddingLeft={8}>
         <Box display="flex" justifyContent="start">
-          <Typography fontSize={24} fontWeight={600}>
-            Processing Return
-          </Typography>
+          <Typography fontSize={24} fontWeight={600}>回跳处理中</Typography>
         </Box>
 
         <Box paddingTop={3} sx={{ maxHeight: "700px" }}>

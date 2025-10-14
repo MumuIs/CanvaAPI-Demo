@@ -12,7 +12,7 @@ export const HomePage = () => {
   return (
     <>
       <Typography variant="h4" gutterBottom={true}>
-        {displayName ? `Good day, ${displayName}!` : `Good day!`}
+        {displayName ? `你好，${displayName}！` : `你好！`}
       </Typography>
       <HomeTiles />
     </>
@@ -28,22 +28,22 @@ const placeholderStats: {
 }[] = [
   {
     icon: <ShoppingCartOutlinedIcon />,
-    title: "Abandoned carts",
-    label: "This week",
+    title: "弃单数",
+    label: "本周",
     number: 20,
     changePct: 0.1,
   },
   {
     icon: <PeopleAltOutlinedIcon />,
-    title: "Active customers",
-    label: "This week",
+    title: "活跃客户",
+    label: "本周",
     number: 1250,
     changePct: 0.15,
   },
   {
     icon: <ShoppingBagOutlinedIcon />,
-    title: "All orders",
-    label: "This week",
+    title: "订单总数",
+    label: "本周",
     number: 10,
     changePct: -0.1,
   },
@@ -70,8 +70,8 @@ const HomeTiles = () => (
     <Grid item={true} xs={8}>
       <InfoPaper
         icon={<BarChart />}
-        label="This year"
-        title="Sales summary"
+        label="今年"
+        title="销售概览"
         Content={<DemoSalesChart />}
       />
     </Grid>

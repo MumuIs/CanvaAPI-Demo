@@ -36,8 +36,8 @@ export const ConnectButton = () => {
         setToken(result);
 
         addAlert({
-          title: "The Canva for Nourish integration is now connected",
-          body: `You're currently logged in.`,
+          title: "已成功连接 Canva 集成",
+          body: `你已完成登录。`,
           variant: "success",
           hideAfterMs: 5000,
         });
@@ -63,7 +63,7 @@ export const ConnectButton = () => {
       setToken(undefined);
       setDisplayName("");
       addAlert({
-        title: "Your Canva integration has been disconnected",
+        title: "已断开 Canva 集成连接",
         variant: "info",
       });
     }
@@ -76,7 +76,7 @@ export const ConnectButton = () => {
       onClick={onRevokeClick}
       fullWidth={true}
     >
-      DISCONNECT FROM CANVA
+      断开与 Canva 的连接
     </DemoButton>
   ) : (
     <DemoButton
@@ -86,7 +86,7 @@ export const ConnectButton = () => {
       loading={isLoading}
       fullWidth={true}
     >
-      CONNECT TO CANVA
+      连接到 Canva
     </DemoButton>
   );
 };

@@ -10,22 +10,22 @@ export const MarketingPage = () => {
   return (
     <>
       <Typography variant="h4" gutterBottom={true}>
-        Marketing
+        市场营销
       </Typography>
       <Grid container={true} spacing={2}>
         <Grid item={true} xs={4}>
           <CallToActionPaper
-            devNoteText="Single designs are generated using the create design API which is available to Canva users from all tiers and subscriptions."
-            callToActionText="Single Design"
-            callToActionDescription="Create a single design in your chosen size from an existing product"
+            devNoteText="单个设计通过“创建设计”API 生成，适用于所有 Canva 订阅层级。"
+            callToActionText="单个设计"
+            callToActionDescription="从现有商品按指定尺寸创建一个设计"
             onClick={() => navigate(Paths.SINGLE_DESIGN_GENERATOR)}
           />
         </Grid>
         <Grid item={true} xs={4}>
           <CallToActionPaper
-            devNoteText="Multiple designs are generated using brand templates and autofill APIs which are only available to Canva Enterprise users."
-            callToActionText="Multiple Designs"
-            callToActionDescription="Create multiple designs at once by adding products to your Brand Templates"
+            devNoteText="批量设计基于品牌模板与自动填充 API，仅对 Canva Enterprise 开放。"
+            callToActionText="批量设计"
+            callToActionDescription="将商品添加到品牌模板，一次性创建多个设计"
             onClick={() => navigate(Paths.MULTIPLE_DESIGNS_GENERATOR)}
           />
         </Grid>

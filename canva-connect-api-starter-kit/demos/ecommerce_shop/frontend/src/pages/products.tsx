@@ -27,14 +27,14 @@ export const ProductsPage = () => {
         const getProductsResult = await getProducts();
 
         if (!getProductsResult.products.length) {
-          addAlert({ title: "No products found.", variant: "error" });
+          addAlert({ title: "未找到商品。", variant: "error" });
         } else {
           setProducts(getProductsResult.products);
         }
       } catch (error) {
         console.error(error);
         addAlert({
-          title: "Something went wrong fetching products.",
+          title: "获取商品列表失败。",
           variant: "error",
         });
       } finally {
@@ -72,7 +72,7 @@ export const ProductsPage = () => {
     } catch (error) {
       console.error(error);
       addAlert({
-        title: "Something went wrong creating the design.",
+        title: "创建设计时出现错误。",
         variant: "error",
       });
     }
@@ -84,9 +84,9 @@ export const ProductsPage = () => {
 
   return (
     <Box paddingY={2}>
-      <PageHeader title="Products" />
+      <PageHeader title="商品" />
       <Box position="relative" alignItems="center" display="flex" width={350}>
-        <DeveloperNote info="The 'Edit in Canva' button navigates users to Canva with a 'correlation_state' of where they came from. On return to Nourish, the updated design is fetched and exported." />
+        <DeveloperNote info="“在 Canva 中编辑” 会携带来源页的 correlation_state 跳转到 Canva；返回后，会获取并导出更新后的设计。" />
       </Box>
       <Box>
         {!isFetching && (

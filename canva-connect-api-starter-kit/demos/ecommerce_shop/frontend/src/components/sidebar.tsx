@@ -35,32 +35,32 @@ export const SideBar = () => {
 
   const sidebarItems = [
     {
-      text: "Home",
+      text: "首页",
       Icon: HomeIcon,
       route: Paths.HOME,
       disabled: false,
     },
     {
-      text: "Products",
+      text: "商品",
       Icon: ShoppingCartIcon,
       route: Paths.PRODUCTS,
       disabled: !isAuthorized,
     },
     {
-      text: "Marketing",
+      text: "市场营销",
       Icon: SendIcon,
       route: Paths.MARKETING,
       disabled: !isAuthorized,
     },
     {
-      text: "Uploads",
+      text: "上传",
       Icon: UploadFileIcon,
       route: Paths.HOME,
       disabled: true,
       isDemo: true,
     },
     {
-      text: "Orders",
+      text: "订单",
       Icon: InboxIcon,
       route: Paths.HOME,
       disabled: true,
@@ -86,11 +86,7 @@ export const SideBar = () => {
         <List>
           {sidebarItems.map(({ text, Icon, route, disabled, isDemo }) => (
             <Tooltip
-              title={
-                isDemo
-                  ? "This link is for demonstration purposes only and is not functional."
-                  : ""
-              }
+              title={isDemo ? "演示占位入口，暂无功能。" : ""}
               placement="right"
               key={text}
               arrow={true}
