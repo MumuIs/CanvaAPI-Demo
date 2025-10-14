@@ -1,4 +1,5 @@
-import { AppBar, Container, Link, Toolbar } from "@mui/material";
+import { AppBar, Container, Link, Toolbar, Box, Typography } from "@mui/material";
+import { CanvaIcon } from "./canva-icon";
 
 export const NavBar = () => (
   <AppBar
@@ -10,8 +11,20 @@ export const NavBar = () => (
   >
     <Container maxWidth={false}>
       <Toolbar disableGutters={true}>
-        <Link href="/#/">
-          <img src="/logo.png" alt="nourish-logo" />
+        <Link href="/#/" style={{ textDecoration: "none" }}>
+          <Box display="flex" alignItems="center" gap={1.5}>
+            <CanvaIcon />
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                color: (theme) => theme.palette.primary.main,
+                letterSpacing: 0.4,
+              }}
+            >
+              Canva Enterprise
+            </Typography>
+          </Box>
         </Link>
       </Toolbar>
     </Container>

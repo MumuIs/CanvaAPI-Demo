@@ -16,33 +16,33 @@ export const theme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#00c853", // Green
+      main: "#00C4CC", // Canva Teal
     },
     secondary: {
-      main: "#ffffff", // White
-      backgroundBase: "rgba(255, 255, 255, 0.16)", // White transparent light
+      main: "#7D2AE7", // Canva Purple
+      backgroundBase: "rgba(125, 42, 231, 0.16)",
     },
     info: {
-      main: "#a5d6a7", // light green
+      main: "#00C4CC",
     },
     success: {
-      main: "#66bb6a", // Green
+      main: "#20E5E5", // lighter teal accent
     },
     warning: {
-      main: "#ef6c00", // Orange
-      light: "#F28932", // Light orange
-      backgroundBase: "rgba(239, 108, 0, 0.15)", // Orange transparent light
-      backgroundHover: "rgba(239, 108, 0, 0.25)", // Orange transparent bold
+      main: "#FFAE1A",
+      light: "#FFC55C",
+      backgroundBase: "rgba(255, 174, 26, 0.15)",
+      backgroundHover: "rgba(255, 174, 26, 0.25)",
     },
     error: {
-      main: "#9c27b0", // Purple
+      main: "#FF5C80",
     },
     background: {
-      default: "#121212", // Black
-      paper: "#1e1e1e", // Grey
+      default: "#0F0F12", // dark canvas-like
+      paper: "#15151A",
     },
     text: {
-      primary: "#ffffff", // White
+      primary: "#E6F7F7",
     },
   },
 });
