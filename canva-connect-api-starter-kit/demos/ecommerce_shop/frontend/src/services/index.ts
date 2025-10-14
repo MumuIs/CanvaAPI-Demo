@@ -4,6 +4,7 @@ import { Autofill } from "./autofill";
 import { Designs } from "./design";
 import { Exports } from "./export";
 import { Users } from "./user";
+import { BrandTemplates } from "./brand-template";
 
 export * from "./api";
 export * from "./auth";
@@ -14,6 +15,7 @@ export type Services = {
   designs: Designs;
   exports: Exports;
   users: Users;
+  brandTemplates: BrandTemplates;
 };
 
 export function getUserClient(token?: string) {
@@ -48,6 +50,7 @@ export const installServices = (token?: string): Services => {
   const designs = new Designs(client, assets);
   const exports = new Exports(client);
   const users = new Users(client);
+  const brandTemplates = new BrandTemplates(client);
 
   return {
     assets,
@@ -55,5 +58,6 @@ export const installServices = (token?: string): Services => {
     designs,
     exports,
     users,
+    brandTemplates,
   };
 };

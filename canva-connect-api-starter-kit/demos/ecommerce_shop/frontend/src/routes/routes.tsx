@@ -8,6 +8,8 @@ import {
   ProductsPage,
   ReturnNavPage,
   SingleDesignGeneratorPage,
+  BrandTemplateCreatorPage,
+  BrandTemplateTestPage,
 } from "src/pages";
 import { App } from "../app";
 
@@ -18,6 +20,8 @@ export enum Paths {
   MULTIPLE_DESIGNS_GENERATOR = "/marketing/multiple-designs",
   PRODUCTS = "/products",
   SINGLE_DESIGN_GENERATOR = "/marketing/single-design",
+  BRAND_TEMPLATES = "/brand-templates",
+  BRAND_TEMPLATES_TEST = "/brand-templates/test",
 }
 
 export const routes: RouteObject[] = [
@@ -45,6 +49,14 @@ export const routes: RouteObject[] = [
             <SingleDesignGeneratorPage />
           </CampaignContextProvider>
         ),
+      },
+      {
+        path: Paths.BRAND_TEMPLATES,
+        element: <BrandTemplateCreatorPage />,
+      },
+      {
+        path: Paths.BRAND_TEMPLATES_TEST,
+        element: <BrandTemplateTestPage />,
       },
       {
         path: Paths.MULTIPLE_DESIGNS_GENERATOR,

@@ -282,6 +282,18 @@ export const ReturnNavPage = (): JSX.Element => {
           break;
         }
 
+        /**
+         * Case 4 - Brand Template Creator: 仅提示成功并返回品牌模板页
+         */
+        case EditInCanvaPageOrigins.BRAND_TEMPLATE_CREATOR: {
+          addAlert({
+            title: `${fetchDesignResult.design.title ?? "设计"} 的修改已保存！`,
+            variant: "success",
+            hideAfterMs: 6000,
+          });
+          break;
+        }
+
         default: {
           throw new Error("未识别的 Canva 编辑起始来源。");
         }

@@ -53,6 +53,19 @@ export const SideBar = () => {
       disabled: !isAuthorized,
     },
     {
+      text: "品牌模板",
+      Icon: SendIcon,
+      route: Paths.BRAND_TEMPLATES,
+      disabled: !isAuthorized,
+    },
+    {
+      text: "模板测试",
+      Icon: SendIcon,
+      route: Paths.BRAND_TEMPLATES_TEST,
+      disabled: !isAuthorized,
+      isDemo: true,
+    },
+    {
       text: "上传",
       Icon: UploadFileIcon,
       route: Paths.HOME,
