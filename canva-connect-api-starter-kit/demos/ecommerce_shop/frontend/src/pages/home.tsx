@@ -159,9 +159,7 @@ export const ConnectToCanvaCta = () => {
             paragraph={true}
             gutterBottom={true}
           >
-            Connect the Canva for <b>Nourish</b> integration to seamlessly
-            manage existing assets, edit product images, and create designs at
-            scale.
+          连接 Canva 企业版集成，便捷管理现有素材、编辑商品图片，并批量创建设计。
           </Typography>
           <Box display="flex" justifyContent="center">
             <ConnectButton />
