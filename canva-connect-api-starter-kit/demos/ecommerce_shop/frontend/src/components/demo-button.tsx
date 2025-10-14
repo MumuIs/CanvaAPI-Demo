@@ -35,14 +35,21 @@ export const DemoButton = ({
     children,
     ...remainingProps
   } = demoButtonProps;
+  const variantByDemo: Record<DemoButtonVariant, MUIButtonProps["variant"]> = {
+    primary: "contained",
+    secondary: "outlined",
+    destructive: "outlined",
+  };
+
   return (
     <MUIButton
-      variant="outlined"
+      variant={variantByDemo[demoVariant]}
       size="large"
       color={DEMO_BUTTON_COLORS[demoVariant]}
       disabled={disabled || loading}
       startIcon={!loading && startIcon}
       endIcon={!loading && endIcon}
+      sx={{ borderRadius: 2, px: 3, py: 1.2 }}
       {...remainingProps}
     >
       {loading ? <CircularProgress color="inherit" size={26} /> : children}
