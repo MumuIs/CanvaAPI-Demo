@@ -1,39 +1,15 @@
 import { useEffect, useState } from "react";
 import type { BrandTemplate } from "@canva/connect-api-ts/types.gen";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  CircularProgress,
-  Grid,
-  Stack,
-  Typography,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Checkbox,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormLabel,
-} from "@mui/material";
+import { Box, Card, CardContent, CardMedia, CircularProgress, Grid, Stack, Typography, Alert } from "@mui/material";
 import { useAppContext } from "src/context";
 import { PageDescriptor } from "src/components";
 import type { CorrelationState } from "src/models";
-import { EditInCanvaPageOrigins } from "src/models";
 
 export const BrandTemplateCreatorPage = (): JSX.Element => {
   const { services, addAlert, isAuthorized } = useAppContext();
   const [brandTemplates, setBrandTemplates] = useState<BrandTemplate[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
-  const [isCreating, setIsCreating] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
-  const [useApiMethod, setUseApiMethod] = useState(false);
+  // Read-only browsing of Brand Templates
 
   useEffect(() => {
     if (isAuthorized) {
@@ -54,64 +30,7 @@ export const BrandTemplateCreatorPage = (): JSX.Element => {
     }
   };
 
-  const handleTemplateSelect = (templateId: string, selected: boolean) => {
-    setSelectedTemplates((prev) =>
-      selected ? [...prev, templateId] : prev.filter((id) => id !== templateId),
-    );
-  };
-
-  const handleCreateDesigns = async () => {
-    if (selectedTemplates.length === 0) {
-      addAlert({ title: "请至少选择一个模板", variant: "error" });
-      return;
-    }
-
-    setIsCreating(true);
-    setShowDialog(true);
-
-    try {
-      const correlationState: CorrelationState = {
-        originPage: EditInCanvaPageOrigins.BRAND_TEMPLATE_CREATOR as any,
-        selectedTemplates,
-      } as any;
-
-      if (useApiMethod) {
-        const results = await Promise.allSettled(
-          selectedTemplates.map((id) =>
-            services.brandTemplates.createDesignFromTemplateViaAPI(
-              id,
-              correlationState,
-            ),
-          ),
-        );
-        const successCount = results.filter((r) => r.status === "fulfilled").length;
-        addAlert({
-          title: `成功创建了 ${successCount} 个设计`,
-          body: "注意：这是空白设计，用户需要手动应用模板",
-          variant: "success",
-          hideAfterMs: 5000,
-        });
-      } else {
-        const result = await services.brandTemplates.createMultipleDesignsFromTemplates(
-          selectedTemplates,
-          correlationState,
-        );
-        addAlert({
-          title: `成功打开 ${result.designs.length} 个模板进行编辑`,
-          body: "注意：新设计可能不会保留 return navigation 参数",
-          variant: "warning",
-          hideAfterMs: 5000,
-        });
-      }
-    } catch (error) {
-      console.error("创建设计失败:", error);
-      addAlert({ title: "创建设计失败", variant: "error" });
-    } finally {
-      setIsCreating(false);
-      setShowDialog(false);
-      setSelectedTemplates([]);
-    }
-  };
+  // Removed creation flows from this page per requirement – only browse & read
 
   if (!isAuthorized) {
     return (
@@ -125,59 +44,11 @@ export const BrandTemplateCreatorPage = (): JSX.Element => {
   return (
     <Box padding={4}>
       <PageDescriptor
-        title="Brand Template 创建器"
-        description="选择 brand templates 并创建设计副本，支持 return navigation"
+        title="品牌模板"
+        description="浏览并读取你组织的品牌模板：标题、缩略图、创建时间、ID 等信息。此处不提供创建设计操作。"
       />
 
       <Stack spacing={3}>
-        <Card>
-          <CardContent>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">创建方法选择</FormLabel>
-              <RadioGroup
-                value={useApiMethod}
-                onChange={(e) => setUseApiMethod(e.target.value === "true")}
-              >
-                <FormControlLabel
-                  value={false}
-                  control={<Radio />}
-                  label={
-                    <Box>
-                      <Typography variant="body1">使用 create_url 方法（推荐）</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        基于模板创建副本，但可能丢失 return navigation 参数
-                      </Typography>
-                    </Box>
-                  }
-                />
-                <FormControlLabel
-                  value={true}
-                  control={<Radio />}
-                  label={
-                    <Box>
-                      <Typography variant="body1">使用 API 方法</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        创建空白设计，保留 return navigation，但需要手动应用模板
-                      </Typography>
-                    </Box>
-                  }
-                />
-              </RadioGroup>
-            </FormControl>
-          </CardContent>
-        </Card>
-
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">已选择 {selectedTemplates.length} 个模板</Typography>
-          <Button
-            variant="contained"
-            onClick={handleCreateDesigns}
-            disabled={selectedTemplates.length === 0 || isCreating}
-            startIcon={isCreating ? <CircularProgress size={20} /> : null}
-          >
-            {isCreating ? "创建中..." : "创建设计副本"}
-          </Button>
-        </Box>
 
         {isLoading ? (
           <Box display="flex" justifyContent="center" padding={4}>
@@ -205,16 +76,6 @@ export const BrandTemplateCreatorPage = (): JSX.Element => {
                     <Typography variant="body2" color="text.secondary">
                       创建时间: {new Date(template.created_at * 1000).toLocaleDateString()}
                     </Typography>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={selectedTemplates.includes(template.id)}
-                          onChange={(e) => handleTemplateSelect(template.id, e.target.checked)}
-                        />
-                      }
-                      label="选择此模板"
-                      sx={{ mt: 1 }}
-                    />
                   </CardContent>
                 </Card>
               </Grid>
@@ -226,16 +87,7 @@ export const BrandTemplateCreatorPage = (): JSX.Element => {
           <Alert severity="info">没有找到任何 brand templates。请确保你的 Canva 账户中有可用的品牌模板。</Alert>
         )}
       </Stack>
-
-      <Dialog open={showDialog} onClose={() => {}}>
-        <DialogTitle>正在创建设计副本</DialogTitle>
-        <DialogContent>
-          <Box display="flex" alignItems="center" gap={2}>
-            <CircularProgress size={24} />
-            <Typography>正在打开 {selectedTemplates.length} 个模板进行编辑...</Typography>
-          </Box>
-        </DialogContent>
-      </Dialog>
+      {/* 不提供 create_url 或 API 创建路径的界面入口 */}
     </Box>
   );
 };

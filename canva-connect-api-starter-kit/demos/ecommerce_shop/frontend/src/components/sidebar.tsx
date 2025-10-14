@@ -12,11 +12,12 @@ import {
   ListItemText,
   Tooltip,
 } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import InboxIcon from "@mui/icons-material/Inbox";
-import SendIcon from "@mui/icons-material/Send";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
+import CollectionsBookmarkOutlinedIcon from "@mui/icons-material/CollectionsBookmarkOutlined";
 import { useAppContext } from "src/context";
 import { Paths } from "src/routes";
 
@@ -36,44 +37,37 @@ export const SideBar = () => {
   const sidebarItems = [
     {
       text: "首页",
-      Icon: HomeIcon,
+      Icon: HomeOutlinedIcon,
       route: Paths.HOME,
       disabled: false,
     },
     {
       text: "商品",
-      Icon: ShoppingCartIcon,
+      Icon: Inventory2OutlinedIcon,
       route: Paths.PRODUCTS,
       disabled: !isAuthorized,
     },
     {
       text: "营销",
-      Icon: SendIcon,
+      Icon: CampaignOutlinedIcon,
       route: Paths.MARKETING,
       disabled: !isAuthorized,
     },
     {
       text: "品牌模板",
-      Icon: SendIcon,
+      Icon: CategoryOutlinedIcon,
       route: Paths.BRAND_TEMPLATES,
       disabled: !isAuthorized,
     },
     {
-      text: "模板测试",
-      Icon: SendIcon,
-      route: Paths.BRAND_TEMPLATES_TEST,
-      disabled: !isAuthorized,
-      isDemo: true,
-    },
-    {
       text: "素材上传",
-      Icon: UploadFileIcon,
+      Icon: CloudUploadOutlinedIcon,
       route: Paths.UPLOADS,
       disabled: !isAuthorized,
     },
     {
       text: "内容库",
-      Icon: InboxIcon,
+      Icon: CollectionsBookmarkOutlinedIcon,
       route: Paths.CONTENT_LIBRARY,
       disabled: !isAuthorized,
     },
@@ -131,8 +125,8 @@ export const SideBar = () => {
                       : "transparent",
                   }}
                 >
-                  <ListItemIcon>
-                    <Icon color={isActive(route) ? "secondary" : "primary"} />
+                  <ListItemIcon sx={{ minWidth: 40 }}>
+                    <Icon fontSize="medium" color={isActive(route) ? "secondary" : "primary"} />
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
