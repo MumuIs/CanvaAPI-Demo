@@ -9,3 +9,4 @@ export { default as BrandTemplateCreatorPage } from "./brand-template-creator";
 // export { default as BrandTemplateTestPage } from "./brand-template-test"; // removed per requirement
 export { default as UploadsPage } from "./uploads";
 export { default as ContentLibraryPage } from "./content-library";
+export { default as ApiOverviewPage } from "./api-overview";

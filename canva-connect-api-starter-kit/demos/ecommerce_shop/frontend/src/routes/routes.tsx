@@ -9,6 +9,7 @@ import {
   ReturnNavPage,
   SingleDesignGeneratorPage,
   BrandTemplateCreatorPage,
+  ApiOverviewPage,
   
   UploadsPage,
   ContentLibraryPage,
@@ -26,6 +27,7 @@ export enum Paths {
   
   UPLOADS = "/uploads",
   CONTENT_LIBRARY = "/content-library",
+  API_OVERVIEW = "/api-overview",
 }
 
 export const routes: RouteObject[] = [
@@ -66,6 +68,10 @@ export const routes: RouteObject[] = [
       {
         path: Paths.CONTENT_LIBRARY,
         element: <ContentLibraryPage />,
+      },
+      {
+        path: Paths.API_OVERVIEW,
+        element: <ApiOverviewPage />,
       },
       {
         path: Paths.MULTIPLE_DESIGNS_GENERATOR,

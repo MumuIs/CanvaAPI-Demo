@@ -18,6 +18,7 @@ import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import CollectionsBookmarkOutlinedIcon from "@mui/icons-material/CollectionsBookmarkOutlined";
+import ApiOutlinedIcon from "@mui/icons-material/ApiOutlined";
 import { useAppContext } from "src/context";
 import { Paths } from "src/routes";
 
@@ -70,6 +71,12 @@ export const SideBar = () => {
       Icon: CollectionsBookmarkOutlinedIcon,
       route: Paths.CONTENT_LIBRARY,
       disabled: !isAuthorized,
+    },
+    {
+      text: "API 概览",
+      Icon: ApiOutlinedIcon,
+      route: Paths.API_OVERVIEW,
+      disabled: false,
     },
     
   ];
