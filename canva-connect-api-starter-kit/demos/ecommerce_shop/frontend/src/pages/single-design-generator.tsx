@@ -72,8 +72,8 @@ export const SingleDesignGeneratorPage = () => {
   return (
     <Grid container={true} spacing={3}>
       <PageDescriptor
-        title="Single Design"
-        description="Create a single design in your chosen size from an existing product"
+        title="单个设计"
+        description="从现有商品按指定尺寸创建一个设计，或选择空白画布自定义创建"
       />
       <Grid item={true} xs={8}>
         {createdSingleDesign && selectedCampaignProduct ? (

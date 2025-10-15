@@ -174,7 +174,7 @@ export const ConnectToCanvaCta = () => {
           </Box>
         </Box>
         <Box display="flex" justifyContent="center">
-          <DeveloperNote info="Set up an integration in the developer portal before connecting to Canva" />
+            <DeveloperNote info="提示：在连接 Canva 前，请先在开发者后台完成集成配置。" />
         </Box>
       </CardContent>
     </Card>

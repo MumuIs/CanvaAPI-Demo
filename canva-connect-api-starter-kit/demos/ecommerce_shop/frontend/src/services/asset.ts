@@ -41,7 +41,7 @@ export class Assets {
     const imageBlob = await this.getImageBlob(imageUrl);
     const result = await this.createAssetUpload({
       image: imageBlob,
-      name,
+      name: encodeURIComponent(name),
     });
 
     if (!result) {
@@ -69,7 +69,7 @@ export class Assets {
     name: string;
     file: Blob;
   }): Promise<Asset> {
-    const result = await this.createAssetUpload({ image: file, name });
+    const result = await this.createAssetUpload({ image: file, name: encodeURIComponent(name) });
     if (!result) throw new Error(`Upload asset blob failed for "${name}".`);
     const asset = await this.pollAssetUpload(result.job.id);
     if (!asset) {

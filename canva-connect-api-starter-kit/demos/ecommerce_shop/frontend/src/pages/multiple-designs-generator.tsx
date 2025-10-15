@@ -173,8 +173,8 @@ export const MultipleDesignsGeneratorPage = () => {
   return (
     <Grid container={true} spacing={3} marginBottom={4}>
       <PageDescriptor
-        title="Multiple Designs"
-        description="Create multiple designs at once by adding products to your Brand Templates"
+        title="批量设计"
+        description="将商品添加到品牌模板，一次性创建多个设计"
       />
       <Grid item={true} xs={8}>
         {marketingMultiDesignResults.length ? (

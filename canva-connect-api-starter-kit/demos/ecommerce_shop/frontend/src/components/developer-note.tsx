@@ -6,7 +6,7 @@ export const DeveloperNote = ({ info }: { info: string }) => (
     <Chip
       variant="outlined"
       color="warning"
-      label="Developer note"
+      label="开发者提示"
       icon={<HelpOutline sx={{ width: "29px", height: "29px" }} />}
       sx={{
         width: "100%",

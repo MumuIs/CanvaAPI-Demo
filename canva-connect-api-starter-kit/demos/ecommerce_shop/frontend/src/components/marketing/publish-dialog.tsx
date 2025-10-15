@@ -47,7 +47,7 @@ export const PublishDialog = ({
         </Box>
         <Box width={400}>
           <Stack spacing={2}>
-            <DeveloperNote info="This is for demo purposes only, the campaign is not really published anywhere" />
+            <DeveloperNote info="提示：此为演示功能，活动不会实际发布到任何平台。" />
             <DemoButton
               demoVariant="primary"
               onClick={() => onOpenChange(false)}

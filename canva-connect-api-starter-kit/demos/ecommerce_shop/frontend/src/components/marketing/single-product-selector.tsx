@@ -65,9 +65,9 @@ export const SingleProductSelector = ({ disabled }: { disabled: boolean }) => {
   return (
     <Box marginBottom={2}>
           <FormControl fullWidth={true}>
-        <InputLabel id="product-select-label">Product</InputLabel>
+            <InputLabel id="product-select-label">商品</InputLabel>
         <Select
-          label="Product"
+              label="商品"
           labelId="product-select-label"
           onChange={handleChange}
           value={selectedCampaignProduct?.id || ""}

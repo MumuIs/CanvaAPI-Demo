@@ -7,11 +7,11 @@ export const CampaignNameInput = ({ disabled }: { disabled: boolean }) => {
   return (
     <FormPaper>
       <Typography variant="h5" marginBottom={4}>
-        Choose a campaign name
+        请输入活动名称
       </Typography>
       <TextField
         id="campaign-name"
-        label="Campaign name"
+        label="活动名称"
         variant="outlined"
         value={campaignName}
         onChange={(e) => setCampaignName(e.target.value)}

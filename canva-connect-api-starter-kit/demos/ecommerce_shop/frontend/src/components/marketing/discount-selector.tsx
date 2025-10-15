@@ -15,9 +15,9 @@ export const DiscountSelector = ({ disabled }: { disabled: boolean }) => {
   return (
     <Box marginBottom={2}>
       <FormControl fullWidth={true}>
-        <InputLabel id="discount-select-label">Discount</InputLabel>
+        <InputLabel id="discount-select-label">折扣</InputLabel>
         <Select
-          label="Product"
+          label="折扣"
           labelId="discount-select-label"
           onChange={(e) => setSelectedDiscount(e.target.value)}
           value={selectedDiscount}
