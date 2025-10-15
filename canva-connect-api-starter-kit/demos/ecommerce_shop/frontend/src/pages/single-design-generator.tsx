@@ -1,7 +1,8 @@
 import confetti from "canvas-confetti";
 import { useEffect, useState } from "react";
 import type { Design } from "@canva/connect-api-ts/types.gen";
-import { Grid, Stack, Typography } from "@mui/material";
+import { Grid, Stack, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField } from "@mui/material";
+import type { DesignTypeInput } from "@canva/connect-api-ts/types.gen";
 import {
   CampaignNameInput,
   CanvaIcon,
@@ -20,6 +21,9 @@ export const SingleDesignGeneratorPage = () => {
   const { campaignName } = useCampaignContext();
   const [isLoading, setIsLoading] = useState(false);
   const [isFirstGenerated, setIsFirstGenerated] = useState(false);
+  const [preset, setPreset] = useState<"presentation" | "doc" | "whiteboard" | "custom">("presentation");
+  const [customWidth, setCustomWidth] = useState<number>(1080);
+  const [customHeight, setCustomHeight] = useState<number>(1080);
 
   const {
     addAlert,
@@ -35,11 +39,17 @@ export const SingleDesignGeneratorPage = () => {
     }
     setIsLoading(true);
     try {
-      const design =
-        await services.designs.uploadAssetAndCreateDesignFromProduct({
-          campaignName,
-          product: selectedCampaignProduct,
-        });
+      let designType: DesignTypeInput | undefined;
+      if (preset === "custom") {
+        designType = { type: "custom", width: customWidth, height: customHeight };
+      } else {
+        designType = { type: "preset", name: preset } as DesignTypeInput;
+      }
+      const design = await services.designs.uploadAssetAndCreateDesignFromProduct({
+        campaignName,
+        product: selectedCampaignProduct,
+        designType,
+      });
       setCreatedSingleDesign(design.design);
       setIsFirstGenerated(true);
       addAlert({
@@ -92,6 +102,41 @@ const SingleCampaignForm = ({
     <Stack spacing={4}>
       <CampaignNameInput disabled={isLoading} />
       <FormPaper>
+        <FormControl>
+          <FormLabel>设计类型</FormLabel>
+          <RadioGroup
+            row
+            value={preset}
+            onChange={(e) => setPreset(e.target.value as any)}
+          >
+            <FormControlLabel value="presentation" control={<Radio />} label="演示文稿" />
+            <FormControlLabel value="doc" control={<Radio />} label="文档" />
+            <FormControlLabel value="whiteboard" control={<Radio />} label="白板" />
+            <FormControlLabel value="custom" control={<Radio />} label="自定义" />
+          </RadioGroup>
+        </FormControl>
+        {preset === "custom" && (
+          <Stack direction="row" spacing={2} mt={2}>
+            <TextField
+              label="宽(px)"
+              type="number"
+              size="small"
+              value={customWidth}
+              onChange={(e) => setCustomWidth(Number(e.target.value))}
+              inputProps={{ min: 100, step: 10 }}
+            />
+            <TextField
+              label="高(px)"
+              type="number"
+              size="small"
+              value={customHeight}
+              onChange={(e) => setCustomHeight(Number(e.target.value))}
+              inputProps={{ min: 100, step: 10 }}
+            />
+          </Stack>
+        )}
+      </FormPaper>
+      <FormPaper>
         <Stack spacing={4} marginBottom={4}>
           <Typography variant="h5" marginBottom={4}>
             Select product details
@@ -103,7 +148,7 @@ const SingleCampaignForm = ({
           demoVariant="primary"
           loading={isLoading}
           onClick={onCreate}
-          disabled={!setSelectedCampaignProduct || !campaignName}
+          disabled={!setSelectedCampaignProduct}
           fullWidth={true}
           startIcon={<CanvaIcon />}
         >

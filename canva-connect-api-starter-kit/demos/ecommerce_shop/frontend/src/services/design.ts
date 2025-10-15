@@ -1,4 +1,4 @@
-import type { Design } from "@canva/connect-api-ts/types.gen";
+import type { Design, DesignTypeInput } from "@canva/connect-api-ts/types.gen";
 import type { Product } from "src/models";
 import type { Assets } from "./asset";
 
@@ -17,9 +17,11 @@ export class Designs {
   async uploadAssetAndCreateDesignFromProduct({
     product,
     campaignName,
+    designType,
   }: {
     product: Product;
     campaignName?: string;
+    designType?: DesignTypeInput;
   }): Promise<{
     design: Design;
     refreshedProducts?: Product[];
@@ -36,6 +38,7 @@ export class Designs {
       body: {
         asset_id: asset.id,
         title: name,
+        ...(designType ? { design_type: designType } : {}),
       },
     });
 
@@ -83,15 +86,18 @@ export class Designs {
   async createDesignFromAsset({
     assetId,
     title,
+    designType,
   }: {
     assetId: string;
     title?: string;
+    designType?: DesignTypeInput;
   }): Promise<{ design: Design }> {
     const result = await DesignService.createDesign({
       client: this.client,
       body: {
         asset_id: assetId,
         ...(title ? { title } : {}),
+        ...(designType ? { design_type: designType } : {}),
       },
     });
     if (result.error) {

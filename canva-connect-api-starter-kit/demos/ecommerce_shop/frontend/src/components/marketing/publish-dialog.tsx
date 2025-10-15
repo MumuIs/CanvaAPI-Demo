@@ -16,7 +16,15 @@ export const PublishDialog = ({
       open={isOpen}
       onClose={() => onOpenChange(false)}
       maxWidth="sm"
-      PaperProps={{ sx: { bgcolor: "black" } }}
+      PaperProps={{
+        sx: {
+          bgcolor: (t) => t.palette.background.paper,
+          color: (t) => t.palette.text.primary,
+          borderRadius: 3,
+          border: (t) => `1px solid ${t.palette.divider}`,
+          boxShadow: (t) => `0 8px 24px rgba(16,24,40,0.18)`,
+        },
+      }}
     >
       <Box
         display="flex"

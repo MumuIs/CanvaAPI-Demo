@@ -9,16 +9,16 @@ const UploadsPage = (): JSX.Element => {
   const { isAuthorized, services, addAlert } = useAppContext();
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setUploading] = useState(false);
-  const [recentAssets, setRecentAssets] = useState<Array<{ id: string; name: string; createdAt: number }>>(() => {
+  const [recentAssets, setRecentAssets] = useState<Array<{ id: string; name: string; createdAt: number; thumb?: string }>>(() => {
     try {
       const raw = localStorage.getItem("recent_assets");
-      return raw ? (JSON.parse(raw) as Array<{ id: string; name: string; createdAt: number }>) : [];
+      return raw ? (JSON.parse(raw) as Array<{ id: string; name: string; createdAt: number; thumb?: string }>) : [];
     } catch {
       return [];
     }
   });
 
-  const saveRecentAssets = (assets: Array<{ id: string; name: string; createdAt: number }>) => {
+  const saveRecentAssets = (assets: Array<{ id: string; name: string; createdAt: number; thumb?: string }>) => {
     setRecentAssets(assets);
     try {
       localStorage.setItem("recent_assets", JSON.stringify(assets.slice(0, 20)));
@@ -34,7 +34,8 @@ const UploadsPage = (): JSX.Element => {
     try {
       setUploading(true);
       const asset = await services.assets.uploadAssetBlob({ name: file.name, file });
-      saveRecentAssets([{ id: asset.id, name: file.name, createdAt: Date.now() }, ...recentAssets]);
+      const thumb = asset.thumbnail?.url;
+      saveRecentAssets([{ id: asset.id, name: file.name, createdAt: Date.now(), thumb }, ...recentAssets]);
       addAlert({ title: "素材上传成功", body: `Asset ID: ${asset.id}`, variant: "success", hideAfterMs: 5000 });
     } catch (e) {
       console.error(e);
@@ -56,8 +57,8 @@ const UploadsPage = (): JSX.Element => {
 
       // 记录到内容库
       const raw = localStorage.getItem("content_library_designs");
-      const list = raw ? (JSON.parse(raw) as Array<{ id: string; title: string; createdAt: number; editUrl: string }>) : [];
-      list.unshift({ id: design.id, title: design.title, createdAt: Date.now(), editUrl: design.urls.edit_url });
+      const list = raw ? (JSON.parse(raw) as Array<{ id: string; title: string; createdAt: number; editUrl: string; thumb?: string }>) : [];
+      list.unshift({ id: design.id, title: design.title, createdAt: Date.now(), editUrl: design.urls.edit_url, thumb: design.thumbnail?.url });
       localStorage.setItem("content_library_designs", JSON.stringify(list.slice(0, 100)));
     } catch (e) {
       console.error(e);
@@ -107,9 +108,13 @@ const UploadsPage = (): JSX.Element => {
               <Grid container={true} spacing={2}>
                 {recentAssets.map((a) => (
                   <Grid item={true} xs={12} md={6} lg={4} key={a.id}>
-                    <Box display="flex" alignItems="center" justifyContent="space-between">
-                      <Box display="flex" alignItems="center" gap={2}>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap={2}>
+                      {a.thumb ? (
+                        <img src={a.thumb} alt={a.name} style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.08)" }} />
+                      ) : (
                         <Avatar sx={{ bgcolor: "primary.main" }}>{a.name.slice(0,1).toUpperCase()}</Avatar>
+                      )}
+                      <Box display="flex" alignItems="center" gap={2}>
                         <Box>
                           <Typography>{a.name}</Typography>
                           <Typography variant="caption" color="text.secondary">

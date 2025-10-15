@@ -5,7 +5,7 @@ import { useAppContext } from "src/context";
 import { createNavigateToCanvaUrl } from "src/services/canva-return";
 import { EditInCanvaPageOrigins } from "src/models";
 
-type SavedDesign = { id: string; title: string; editUrl: string; createdAt: number };
+type SavedDesign = { id: string; title: string; editUrl: string; createdAt: number; thumb?: string };
 
 const ContentLibraryPage = (): JSX.Element => {
   const { isAuthorized, addAlert } = useAppContext();
@@ -54,6 +54,9 @@ const ContentLibraryPage = (): JSX.Element => {
                 <Card>
                   <CardContent>
                     <Stack spacing={1}>
+                      {d.thumb && (
+                        <img src={d.thumb} alt={d.title} style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.06)" }} />
+                      )}
                       <Typography fontWeight={600}>{d.title || d.id}</Typography>
                       <Typography variant="caption" color="text.secondary">
                         创建时间：{new Date(d.createdAt).toLocaleString()}
