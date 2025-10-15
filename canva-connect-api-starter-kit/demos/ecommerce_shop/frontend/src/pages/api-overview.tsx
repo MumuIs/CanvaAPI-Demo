@@ -10,10 +10,10 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import { PageDescriptor } from "src/components";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <Card variant="outlined">
-    <CardContent>
-      <Typography variant="h6" gutterBottom>{title}</Typography>
-      <Divider sx={{ mb: 2 }} />
+  <Card variant="outlined" sx={{ height: '100%' }}>
+    <CardContent sx={{ p: 2 }}>
+      <Typography variant="subtitle1" fontWeight={700} gutterBottom>{title}</Typography>
+      <Divider sx={{ mb: 1.5 }} />
       <Box>{children}</Box>
     </CardContent>
   </Card>
@@ -136,41 +136,22 @@ const ApiOverviewPage = (): JSX.Element => {
   ];
 
   return (
-    <Box padding={4}>
+    <Box padding={3}>
       <PageDescriptor
         title="API 概览"
         description="按功能模块梳理 Canva Connect API，在 Demo 中的落地与典型业务流程。"
       />
-      <Grid container spacing={3} alignItems="start">
-        <Grid item xs={12} md={8}>
-          <Stack spacing={3}>
-            {sections.map((s) => (
-              <Section key={s.id} title={s.title}>
-                <Box display="flex" gap={1} alignItems="center" mb={1}
-                  sx={{ '& svg': { mr: 1 } }}>
-                  {s.icon}
-                  <Typography variant="subtitle2" color="text.secondary"></Typography>
-                </Box>
-                {s.body}
-              </Section>
-            ))}
-          </Stack>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Card variant="outlined" sx={{ position: 'sticky', top: 88 }}>
-            <CardContent>
-              <Typography variant="subtitle2" gutterBottom>快速导航</Typography>
-              <Stack spacing={1}>
-                {sections.map((s) => (
-                  <Chip key={s.id} label={s.title} onClick={() => {
-                    const el = document.querySelector(`[data-section='${s.id}']`);
-                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }} variant="outlined" />
-                ))}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Grid container spacing={2} alignItems="stretch">
+        {sections.map((s) => (
+          <Grid key={s.id} item xs={12} sm={6} md={3}>
+            <Section title={s.title}>
+              <Box display="flex" alignItems="center" mb={1} sx={{ '& svg': { mr: 1 } }}>
+                {s.icon}
+              </Box>
+              {s.body}
+            </Section>
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );
