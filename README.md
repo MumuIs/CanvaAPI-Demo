@@ -5,11 +5,15 @@
 要求：Node.js 20（或 18）与 npm 9+、Git。
 
 ```bash
-# 克隆并进入项目
+# 推荐：使用 SSH 克隆（先在 GitHub 添加你的公钥）
 git clone git@github.com:MumuIs/CanvaAPI-Demo.git
 cd CanvaAPI-Demo
 
-# 运行一键脚本（首次会生成 canva-connect-api-starter-kit/.env）
+# 若使用 HTTPS 遇到 credential 报错，可执行：
+git config --global --unset-all credential.helper
+git config --global credential.helper osxkeychain
+
+# 一键脚本（首次会生成 canva-connect-api-starter-kit/.env）
 ./bootstrap.sh
 ```
 
