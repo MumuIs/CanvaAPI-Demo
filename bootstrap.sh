@@ -21,15 +21,22 @@ echo "[2/5] 准备 .env"
 if [ ! -f "$KIT_DIR/.env" ]; then
   if [ -f "$KIT_DIR/.env.example" ]; then
     cp "$KIT_DIR/.env.example" "$KIT_DIR/.env"
-    # 填入常用默认值，如有需要由使用者修改
-    sed -i '' 's|^PORT=.*$|PORT=3001|' "$KIT_DIR/.env" || true
-    sed -i '' 's|^BACKEND_URL=.*$|BACKEND_URL=http://127.0.0.1:3001|' "$KIT_DIR/.env" || true
-    sed -i '' 's|^BASE_CANVA_CONNECT_API_URL=.*$|BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1|' "$KIT_DIR/.env" || true
-    echo "[INFO] 已生成默认 .env，请根据你的凭据更新 CANVA_CLIENT_ID / CANVA_CLIENT_SECRET。"
   else
-    echo "[ERROR] 缺少 $KIT_DIR/.env.example"
-    exit 1
+    # 自动生成与校验脚本匹配的最小可用 .env 模板
+    cat > "$KIT_DIR/.env" <<'EOF'
+BACKEND_PORT=3001
+BACKEND_URL=http://127.0.0.1:3001
+FRONTEND_URL=http://127.0.0.1:3000
+BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
+
+CANVA_CLIENT_ID=
+CANVA_CLIENT_SECRET=
+
+DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678
+EOF
   fi
+  echo "[INFO] 已创建 $KIT_DIR/.env。请填入 CANVA_CLIENT_ID / CANVA_CLIENT_SECRET 后重跑本脚本。"
+  exit 0
 fi
 
 echo "[3/5] 安装依赖 (npm ci)"
