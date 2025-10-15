@@ -54,9 +54,30 @@
         </div>
         <div class="step">
           <div class="title">2) 安装 Node.js 20（推荐）</div>
-          <p>若已安装 Homebrew，可执行：</p>
+          <p>如使用 Homebrew：</p>
           <div class="block"><code>brew install node@20</code></div>
-          <p class="small muted">或访问 <span class="code">https://nodejs.org/</span> 安装 20 LTS。</p>
+          <p class="small muted">若在 macOS 15 上遇到 Homebrew 不支持的提示，请改用以下任一备用方案：</p>
+          <div class="cols small">
+            <div>
+              <p><strong>A) 使用 nvm 安装（推荐）</strong></p>
+              <div class="block"><pre style="margin:0;white-space:pre-wrap;"># 安装 nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+# 重新打开终端或执行：
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+# 安装并使用 Node 20
+nvm install 20
+nvm use 20
+node -v
+npm -v</pre></div>
+            </div>
+            <div>
+              <p><strong>B) 官方安装包</strong></p>
+              <p>访问 <span class="code">https://nodejs.org/</span> 下载 macOS 20.x LTS 安装包（Apple Silicon/Intel 对应架构）。安装完成后在终端执行 <span class="code">node -v</span> 与 <span class="code">npm -v</span> 确认。</p>
+            </div>
+          </div>
         </div>
       </div>
 

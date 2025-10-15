@@ -3,6 +3,16 @@
 ## 一键启动（推荐给同事）
 
 要求：Node.js 20（或 18）与 npm 9+、Git。
+macOS 15 上如 Homebrew 提示不支持，可改用 nvm 安装或官网下载包：
+```bash
+# A) 使用 nvm（推荐）
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+nvm install 20 && nvm use 20
+
+# B) 官方安装包
+# 访问 https://nodejs.org 下载 macOS 20 LTS 并安装
+```
 
 ```bash
 # 推荐：使用 SSH 克隆（先在 GitHub 添加你的公钥）
@@ -41,7 +51,4 @@ npm run demo:ecommerce
 ## 文档
 
 - API 概览：`docs/API_Overview.md`
-
-## 文档
-
-- API 概览：`docs/API_Overview.md`
+- 同事快速启动（macOS）：`docs/Quickstart_mac.html`
