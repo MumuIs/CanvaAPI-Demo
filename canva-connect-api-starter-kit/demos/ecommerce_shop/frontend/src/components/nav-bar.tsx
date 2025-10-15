@@ -15,11 +15,11 @@ export const NavBar = () => (
           <Box display="flex" alignItems="center" gap={1.5}>
             <CanvaIcon />
             <Typography
-              variant="h6"
+              variant="subtitle1"
               sx={{
-                fontWeight: 700,
-                color: (theme) => theme.palette.primary.main,
-                letterSpacing: 0.4,
+                fontWeight: 400,
+                color: (theme) => theme.palette.text.primary,
+                letterSpacing: 0.2,
               }}
             >
               Canva Enterprise
