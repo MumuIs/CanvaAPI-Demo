@@ -81,7 +81,16 @@ export const SingleDesignGeneratorPage = () => {
             firstGenerated={isFirstGenerated}
           />
         ) : (
-          <SingleCampaignForm isLoading={isLoading} onCreate={onCreate} />
+          <SingleCampaignForm
+            isLoading={isLoading}
+            onCreate={onCreate}
+            preset={preset}
+            setPreset={(v) => setPreset(v)}
+            customWidth={customWidth}
+            setCustomWidth={setCustomWidth}
+            customHeight={customHeight}
+            setCustomHeight={setCustomHeight}
+          />
         )}
       </Grid>
     </Grid>
@@ -91,12 +100,24 @@ export const SingleDesignGeneratorPage = () => {
 const SingleCampaignForm = ({
   isLoading,
   onCreate,
+  preset,
+  setPreset,
+  customWidth,
+  setCustomWidth,
+  customHeight,
+  setCustomHeight,
 }: {
   isLoading: boolean;
   onCreate: () => void;
+  preset: "presentation" | "doc" | "whiteboard" | "custom";
+  setPreset: (v: "presentation" | "doc" | "whiteboard" | "custom") => void;
+  customWidth: number;
+  setCustomWidth: (v: number) => void;
+  customHeight: number;
+  setCustomHeight: (v: number) => void;
 }) => {
   const { campaignName } = useCampaignContext();
-  const { setSelectedCampaignProduct } = useAppContext();
+  const { selectedCampaignProduct } = useAppContext();
 
   return (
     <Stack spacing={4}>
@@ -148,7 +169,7 @@ const SingleCampaignForm = ({
           demoVariant="primary"
           loading={isLoading}
           onClick={onCreate}
-          disabled={!setSelectedCampaignProduct}
+          disabled={!selectedCampaignProduct}
           fullWidth={true}
           startIcon={<CanvaIcon />}
         >
