@@ -45,11 +45,13 @@ export const SingleDesignGeneratorPage = () => {
       } else {
         designType = { type: "preset", name: preset } as DesignTypeInput;
       }
-      const design = await services.designs.uploadAssetAndCreateDesignFromProduct({
-        campaignName,
-        product: selectedCampaignProduct,
-        designType,
-      });
+      const design = selectedCampaignProduct.id === 0
+        ? await services.designs.createBlankDesign({ title: campaignName, designType })
+        : await services.designs.uploadAssetAndCreateDesignFromProduct({
+            campaignName,
+            product: selectedCampaignProduct,
+            designType,
+          });
       setCreatedSingleDesign(design.design);
       setIsFirstGenerated(true);
       addAlert({

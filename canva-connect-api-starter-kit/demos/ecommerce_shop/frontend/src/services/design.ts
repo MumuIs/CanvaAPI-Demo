@@ -8,6 +8,12 @@ import { upsertProductDesign } from "./api";
 
 const MAX_NAME_LENGTH = 50;
 
+function buildSafeTitle(preferred?: string, fallback?: string): string {
+  const base = (preferred && preferred.trim().length > 0 ? preferred : fallback) || "Untitled";
+  // Trim to API max length
+  return base.slice(0, MAX_NAME_LENGTH);
+}
+
 export class Designs {
   constructor(
     private client: Client,
@@ -26,7 +32,7 @@ export class Designs {
     design: Design;
     refreshedProducts?: Product[];
   }> {
-    const name = campaignName || product.name.slice(0, MAX_NAME_LENGTH);
+    const name = buildSafeTitle(campaignName, product.name);
 
     const asset = await this.assets.uploadAsset({
       name,
@@ -98,6 +104,28 @@ export class Designs {
         asset_id: assetId,
         ...(title ? { title } : {}),
         ...(designType ? { design_type: designType } : {}),
+      },
+    });
+    if (result.error) {
+      console.error(result.error);
+      throw new Error(result.error.message);
+    }
+    return { design: result.data.design };
+  }
+
+  async createBlankDesign({
+    title,
+    designType,
+  }: {
+    title?: string;
+    designType?: DesignTypeInput;
+  }): Promise<{ design: Design }> {
+    const safeTitle = buildSafeTitle(title, "Untitled");
+    const result = await DesignService.createDesign({
+      client: this.client,
+      body: {
+        ...(designType ? { design_type: designType } : {}),
+        ...(safeTitle ? { title: safeTitle } : {}),
       },
     });
     if (result.error) {

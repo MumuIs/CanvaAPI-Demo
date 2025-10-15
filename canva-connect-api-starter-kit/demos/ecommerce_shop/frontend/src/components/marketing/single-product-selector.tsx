@@ -9,6 +9,8 @@ import {
   Select,
   Skeleton,
   Typography,
+  Avatar,
+  Stack,
 } from "@mui/material";
 import { useAppContext } from "src/context";
 import type { Product } from "src/models";
@@ -44,9 +46,11 @@ export const SingleProductSelector = ({ disabled }: { disabled: boolean }) => {
 
   const handleChange = (event: SelectChangeEvent<number>) => {
     const selectedId = event.target.value as number;
-    const filteredProduct = products.find(
-      (product) => product.id === selectedId,
-    );
+    if (selectedId === 0) {
+      setSelectedCampaignProduct({ id: 0, name: "空白画布", imageUrl: "", price: 0 });
+      return;
+    }
+    const filteredProduct = products.find((product) => product.id === selectedId);
     setSelectedCampaignProduct(filteredProduct);
   };
 
@@ -60,7 +64,7 @@ export const SingleProductSelector = ({ disabled }: { disabled: boolean }) => {
 
   return (
     <Box marginBottom={2}>
-      <FormControl fullWidth={true}>
+          <FormControl fullWidth={true}>
         <InputLabel id="product-select-label">Product</InputLabel>
         <Select
           label="Product"
@@ -70,11 +74,20 @@ export const SingleProductSelector = ({ disabled }: { disabled: boolean }) => {
           renderValue={() => selectedCampaignProduct?.name || ""}
           disabled={disabled}
         >
-          {products.map((product) => (
-            <MenuItem key={product.id} value={product.id}>
-              <ListItemText primary={product.name} />
-            </MenuItem>
-          ))}
+              <MenuItem value={0}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Avatar sx={{ width: 28, height: 28 }}>□</Avatar>
+                  <ListItemText primary="空白画布（不使用商品图片）" />
+                </Stack>
+              </MenuItem>
+              {products.map((product) => (
+                <MenuItem key={product.id} value={product.id}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Avatar src={product.imageUrl} sx={{ width: 28, height: 28 }} />
+                    <ListItemText primary={product.name} />
+                  </Stack>
+                </MenuItem>
+              ))}
         </Select>
       </FormControl>
     </Box>
