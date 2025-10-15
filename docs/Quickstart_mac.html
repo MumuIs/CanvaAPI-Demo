@@ -63,7 +63,12 @@
       <h2>二、获取代码并一键启动</h2>
       <div class="steps">
         <div class="step">
-          <div class="title">3) 推荐：配置 SSH 并克隆</div>
+          <div class="title">3A) 公有仓库 · HTTPS 快速克隆（无需 GitHub 账号）</div>
+          <div class="block"><code>git clone https://github.com/MumuIs/CanvaAPI-Demo.git<br/>cd CanvaAPI-Demo</code></div>
+          <p class="muted small">如出现浏览器登录/credential 异常，见下方“HTTPS 凭据修复”。</p>
+        </div>
+        <div class="step">
+          <div class="title">3B) 推荐：配置 SSH 并克隆（长期更省心）</div>
           <p>仅需一次配置 SSH，后续无需反复登录。</p>
           <div class="block small"><pre style="margin:0;white-space:pre-wrap;"># 生成 SSH 密钥（已存在可跳过）
 ssh-keygen -t ed25519 -C "你的邮箱"
@@ -77,10 +82,10 @@ ssh -T git@github.com
 # 克隆项目
 git clone git@github.com:MumuIs/CanvaAPI-Demo.git
 cd CanvaAPI-Demo</pre></div>
-          <p class="muted small">如暂不配置 SSH，可使用 HTTPS（见下条“若使用 HTTPS 克隆”）。</p>
+          <p class="muted small">公有仓库可直接用 HTTPS；团队长期协作建议改用 SSH。</p>
         </div>
         <div class="step">
-          <div class="title">若使用 HTTPS 克隆（出现浏览器登录或 credential 错误时）</div>
+          <div class="title">HTTPS 凭据修复（出现浏览器登录或 credential 错误时）</div>
           <p class="muted small">如果出现 <span class="code">git: 'credential-' 不是一个 git 命令</span>、或反复要求浏览器登录，可先修正凭据助手：</p>
           <div class="block small"><pre style="margin:0;white-space:pre-wrap;">git config --global --get-all credential.helper
 git config --global --unset-all credential.helper
