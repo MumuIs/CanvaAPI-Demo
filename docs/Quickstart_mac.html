@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Canva Connect 电商 Demo - 同事快速启动（macOS）</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --primary: #00B79B;
+        --text: #1f2937; /* gray-800 */
+        --muted: #6b7280; /* gray-500 */
+        --border: #e5e7eb; /* gray-200 */
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color: var(--text); }
+      .page { max-width: 900px; margin: 32px auto; padding: 32px; border: 1px solid var(--border); border-radius: 12px; }
+      h1 { font-size: 22px; margin: 0 0 16px; }
+      h2 { font-size: 18px; margin: 24px 0 8px; }
+      p { margin: 8px 0; line-height: 1.6; }
+      code, .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background: #f8fafc; padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border); }
+      .block { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+      .steps { display: grid; gap: 12px; }
+      .step { border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+      .title { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+      .badge { color: #fff; background: var(--primary); padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .3px; }
+      .muted { color: var(--muted); }
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .small { font-size: 12px; }
+      @media print {
+        .page { border: none; padding: 0; margin: 0; }
+        a { color: inherit; text-decoration: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="title" style="justify-content: space-between;">
+        <div class="title">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--primary);"></span>
+          <h1 style="margin:0;">Canva Connect 电商 Demo - 同事快速启动（macOS）</h1>
+        </div>
+        <span class="badge">1 页指南</span>
+      </div>
+
+      <p class="muted">本页可直接“文件 → 打印 → 存储为 PDF”导出为 PDF 分享。</p>
+
+      <h2>一、安装必备软件（一次即可）</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="title">1) 安装 Git</div>
+          <p>在“终端 Terminal”执行：</p>
+          <div class="block"><code>xcode-select --install</code></div>
+        </div>
+        <div class="step">
+          <div class="title">2) 安装 Node.js 20（推荐）</div>
+          <p>若已安装 Homebrew，可执行：</p>
+          <div class="block"><code>brew install node@20</code></div>
+          <p class="small muted">或访问 <span class="code">https://nodejs.org/</span> 安装 20 LTS。</p>
+        </div>
+      </div>
+
+      <h2>二、获取代码并一键启动</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="title">3) 克隆项目并进入目录</div>
+          <div class="block"><code>git clone https://github.com/MumuIs/CanvaAPI-Demo.git<br/>cd CanvaAPI-Demo</code></div>
+        </div>
+        <div class="step">
+          <div class="title">4) 赋予脚本权限 & 一键启动</div>
+          <div class="block"><code>chmod +x ./bootstrap.sh<br/>./bootstrap.sh</code></div>
+          <p class="muted small">首次会在 <span class="code">canva-connect-api-starter-kit/.env</span> 生成模板，并自动安装依赖与启动。</p>
+        </div>
+      </div>
+
+      <h2>三、填写 .env（仅首次）</h2>
+      <div class="step">
+        <p>文件位置：<span class="code">CanvaAPI-Demo/canva-connect-api-starter-kit/.env</span></p>
+        <div class="cols">
+          <div>
+            <p>打开方式 A（VS Code）：</p>
+            <div class="block"><code>open -a "Visual Studio Code" canva-connect-api-starter-kit/.env</code></div>
+          </div>
+          <div>
+            <p>打开方式 B（文本编辑）：</p>
+            <div class="block"><code>open -e canva-connect-api-starter-kit/.env</code></div>
+          </div>
+        </div>
+        <p>把下列内容粘贴到 .env（仅替换两项为负责人提供的值）：</p>
+        <div class="block small"><pre style="margin:0;white-space:pre-wrap;">PORT=3001
+BACKEND_URL=http://127.0.0.1:3001
+BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
+CANVA_CLIENT_ID=粘贴负责人提供的ClientId
+CANVA_CLIENT_SECRET=粘贴负责人提供的ClientSecret
+WEBHOOK_SECRET=dev-secret</pre></div>
+        <p class="muted small">备注：负责人需在 Canva 应用后台配置回调 <span class="code">http://127.0.0.1:3001/oauth/redirect</span>。</p>
+      </div>
+
+      <h2>四、启动与使用</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="title">5) 若未在运行，手动启动</div>
+          <div class="block"><code>cd canva-connect-api-starter-kit<br/>npm ci<br/>npm run demo:ecommerce</code></div>
+          <p class="muted small">终端出现 “Ecommerce shop backend listening on port 3001” 即后端就绪。</p>
+        </div>
+        <div class="step">
+          <div class="title">6) 打开前端并授权</div>
+          <p>浏览器访问 <span class="code">http://127.0.0.1:3000</span>，在首页点击“连接 Canva”，按提示完成授权。</p>
+        </div>
+      </div>
+
+      <h2>常见问题</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="title">A. 授权失败</div>
+          <p>核对 .env 的 <span class="code">CANVA_CLIENT_ID/SECRET</span> 是否正确；确认 Canva 应用已配置回调。</p>
+        </div>
+        <div class="step">
+          <div class="title">B. 端口占用</div>
+          <p>修改 .env 的 <span class="code">PORT</span>（如 3002），保存后重启命令。</p>
+        </div>
+        <div class="step">
+          <div class="title">C. 网络限制</div>
+          <p>需能访问 <span class="code">https://api.canva.cn/</span>；如公司网络限制，请走可访问的网络或代理。</p>
+        </div>
+      </div>
+
+      <p class="muted small" style="margin-top:12px;">版本：v0.1.0-teammates-quickstart · 如需帮助请联系项目负责人。</p>
+    </main>
+  </body>
+  </html>
+
+
