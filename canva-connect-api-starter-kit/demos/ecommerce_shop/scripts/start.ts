@@ -2,7 +2,8 @@
 import * as path from "path";
 import * as dotenv from "dotenv";
 // 显式加载顶层 ../../.env，避免相对工作目录差异导致读取失败
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+// 从 kit 根目录加载 .env（scripts/ → ecommerce_shop/ → demos/ → kit 根：上三级）
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 import * as yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { AppRunner } from "../../common/scripts/app-runner";
