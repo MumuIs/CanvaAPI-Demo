@@ -49,11 +49,12 @@
       <div class="steps">
         <div class="step">
           <div class="title">1) 安装 Git</div>
-          <p>在“终端 Terminal”执行：</p>
+          <p>在"终端 Terminal"执行：</p>
           <div class="block"><code>xcode-select --install</code></div>
         </div>
         <div class="step">
-          <div class="title">2) 安装 Node.js 20（推荐）</div>
+          <div class="title">2) 安装 Node.js 20（必须）</div>
+          <p class="muted small"><strong>重要：</strong>请使用 Node 20.x，Node 22 存在兼容性问题。</p>
           <p>如使用 Homebrew：</p>
           <div class="block"><code>brew install node@20</code></div>
           <p class="small muted">若在 macOS 15 上遇到 Homebrew 不支持的提示，请改用以下任一备用方案：</p>
@@ -118,7 +119,7 @@ cd CanvaAPI-Demo</pre></div>
         <div class="step">
           <div class="title">4) 赋予脚本权限 & 一键启动</div>
           <div class="block"><code>chmod +x ./bootstrap.sh<br/>./bootstrap.sh</code></div>
-          <p class="muted small">首次会在 <span class="code">canva-connect-api-starter-kit/.env</span> 生成模板，并自动安装依赖与启动。</p>
+          <p class="muted small">首次若未检测到 <span class="code">.env</span>，脚本会自动生成模板并退出，请先填写后再次运行脚本。</p>
         </div>
       </div>
 
@@ -157,31 +158,38 @@ DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678</pre></div>
         <div class="step">
           <div class="title">5) 若未在运行，手动启动</div>
           <div class="block"><code>cd canva-connect-api-starter-kit<br/>npm ci<br/>npm run demo:ecommerce</code></div>
-          <p class="muted small">终端出现 “Ecommerce shop backend listening on port 3001” 即后端就绪。</p>
+          <p class="muted small">终端出现 "Ecommerce shop backend listening on port 3001" 即后端就绪。</p>
+          <p class="muted small">若提示端口占用 (EADDRINUSE)，先清理旧进程：<span class="code">lsof -ti:3000 | xargs kill -9; lsof -ti:3001 | xargs kill -9</span></p>
         </div>
         <div class="step">
           <div class="title">6) 打开前端并授权</div>
-          <p>浏览器访问 <span class="code">http://127.0.0.1:3000</span>，在首页点击“连接 Canva”，按提示完成授权。</p>
+          <p>浏览器访问 <span class="code">http://127.0.0.1:3000</span>，在首页点击"连接 Canva"，按提示完成授权。</p>
         </div>
       </div>
 
       <h2>常见问题</h2>
       <div class="steps">
         <div class="step">
-          <div class="title">A. 授权失败</div>
-          <p>核对 .env 的 <span class="code">CANVA_CLIENT_ID/SECRET</span> 是否正确；确认 Canva 应用已配置回调。</p>
+          <div class="title">A. 启动报错：Placeholder environment variable</div>
+          <p>原因：.env 变量名错误/缺项/值含空格中文/少 /v1。</p>
+          <p class="small">修复：确保使用 Node 20、git pull 拉最新代码、严格按上方 7 变量模板填写、去掉空格与中文。</p>
         </div>
         <div class="step">
-          <div class="title">B. 端口占用</div>
-          <p>修改 .env 的 <span class="code">BACKEND_PORT</span>（如 3002），保存后重启命令。</p>
+          <div class="title">B. 授权失败</div>
+          <p>核对 .env 的 <span class="code">CANVA_CLIENT_ID/SECRET</span> 是否完整正确；确认 Canva 应用已配置回调。</p>
         </div>
         <div class="step">
-          <div class="title">D. 仍无法启动</div>
-          <p>参考 <span class="code">docs/Troubleshooting_Startup.md</span> 获取诊断命令与更多排查建议。</p>
+          <div class="title">C. 端口占用 (EADDRINUSE)</div>
+          <p>先清理旧进程：<span class="code">lsof -ti:3000 | xargs kill -9; lsof -ti:3001 | xargs kill -9</span></p>
+          <p class="small">或修改 .env 的 <span class="code">BACKEND_PORT</span>（如 3002），保存后重启。</p>
         </div>
         <div class="step">
-          <div class="title">C. 网络限制</div>
+          <div class="title">D. 网络限制</div>
           <p>需能访问 <span class="code">https://api.canva.cn/</span>；如公司网络限制，请走可访问的网络或代理。</p>
+        </div>
+        <div class="step">
+          <div class="title">E. 更多排查</div>
+          <p>参考 <span class="code">docs/Troubleshooting_Startup.md</span> 获取完整修复步骤、诊断命令与已验证的解决方案。</p>
         </div>
       </div>
 
