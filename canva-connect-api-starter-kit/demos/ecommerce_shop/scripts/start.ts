@@ -1,12 +1,14 @@
 #!/usr/bin/env node
-import "dotenv/config";
+import * as path from "path";
+import * as dotenv from "dotenv";
+// 显式加载顶层 ../../.env，避免相对工作目录差异导致读取失败
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 import * as yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { AppRunner } from "../../common/scripts/app-runner";
 import { validateEnvironmentVariables } from "../../common/scripts/env";
 import { Context } from "../../common/scripts/context";
 import { buildConfig } from "../frontend/webpack.config";
-import * as path from "path";
 
 const appRunner = new AppRunner();
 

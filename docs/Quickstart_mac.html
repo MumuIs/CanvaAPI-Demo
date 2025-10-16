@@ -135,14 +135,21 @@ cd CanvaAPI-Demo</pre></div>
             <div class="block"><code>open -e canva-connect-api-starter-kit/.env</code></div>
           </div>
         </div>
-        <p>把下列内容粘贴到 .env（仅替换两项为负责人提供的值）：</p>
-        <div class="block small"><pre style="margin:0;white-space:pre-wrap;">PORT=3001
+        <p>把下列内容粘贴到 .env（替换为负责人提供的真实值；变量名需与源码校验一致，合计 7 项）：</p>
+        <div class="block small"><pre style="margin:0;white-space:pre-wrap;">BACKEND_PORT=3001
 BACKEND_URL=http://127.0.0.1:3001
+FRONTEND_URL=http://127.0.0.1:3000
 BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
-CANVA_CLIENT_ID=粘贴负责人提供的ClientId
-CANVA_CLIENT_SECRET=粘贴负责人提供的ClientSecret
-WEBHOOK_SECRET=dev-secret</pre></div>
-        <p class="muted small">备注：负责人需在 Canva 应用后台配置回调 <span class="code">http://127.0.0.1:3001/oauth/redirect</span>。</p>
+
+CANVA_CLIENT_ID=粘贴完整的ClientId
+CANVA_CLIENT_SECRET=粘贴完整的ClientSecret
+
+DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678</pre></div>
+        <p class="muted small">备注：
+          <br/>1) <span class="code">BASE_CANVA_CONNECT_API_URL</span> 必须带 <span class="code">/v1</span>；非中国区可用 <span class="code">https://api.canva.com/rest/v1</span>
+          <br/>2) 首次运行 <span class="code">./bootstrap.sh</span> 若未检测到 <span class="code">.env</span>，将自动生成最小模板并退出，请先填写再重新运行脚本。
+          <br/>3) 负责人需在 Canva 应用后台配置回调 <span class="code">http://127.0.0.1:3001/oauth/redirect</span>。
+        </p>
       </div>
 
       <h2>四、启动与使用</h2>
@@ -166,7 +173,11 @@ WEBHOOK_SECRET=dev-secret</pre></div>
         </div>
         <div class="step">
           <div class="title">B. 端口占用</div>
-          <p>修改 .env 的 <span class="code">PORT</span>（如 3002），保存后重启命令。</p>
+          <p>修改 .env 的 <span class="code">BACKEND_PORT</span>（如 3002），保存后重启命令。</p>
+        </div>
+        <div class="step">
+          <div class="title">D. 仍无法启动</div>
+          <p>参考 <span class="code">docs/Troubleshooting_Startup.md</span> 获取诊断命令与更多排查建议。</p>
         </div>
         <div class="step">
           <div class="title">C. 网络限制</div>
