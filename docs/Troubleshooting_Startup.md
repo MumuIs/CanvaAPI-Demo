@@ -2,6 +2,70 @@
 
 本页汇总同事环境中遇到的启动报错与修复方案，适用于 CanvaAPI-Demo 电商 Demo 的一键启动与手动启动。
 
+## 0. 已验证的完整修复步骤（推荐直接按此操作）
+
+### 问题根因
+- .env 必填变量不匹配源码校验（变量名错误/缺项/值含空格中文）
+- BASE_CANVA_CONNECT_API_URL 少了 /v1
+- CANVA_CLIENT_ID/SECRET 值有前后空格或被截断
+
+### 5 步修复（已在本机验证通过）
+
+**1) 拉最新代码（已修复 start.ts 显式加载 .env）**
+```bash
+cd ~/CanvaAPI-Demo  # 或你的项目目录
+git pull
+```
+
+**2) 确保使用 Node 20（避免 Node 22 兼容性问题）**
+```bash
+nvm use 20  # 或 nvm install 20 && nvm use 20
+node -v     # 确认 v20.x
+```
+
+**3) 编辑 .env（7 个必填变量，严格按模板填写）**
+```bash
+cd ~/CanvaAPI-Demo/canva-connect-api-starter-kit
+open -e .env
+```
+
+模板（复制粘贴，替换为真实凭据，**不加引号/空格/中文**）：
+```env
+BACKEND_PORT=3001
+BACKEND_URL=http://127.0.0.1:3001
+FRONTEND_URL=http://127.0.0.1:3000
+BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
+
+CANVA_CLIENT_ID=粘贴完整ClientId
+CANVA_CLIENT_SECRET=粘贴完整ClientSecret
+
+DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678
+```
+
+关键点：
+- `BASE_CANVA_CONNECT_API_URL` 必须带 `/v1`（非中国区用 `https://api.canva.com/rest/v1`）
+- `CANVA_CLIENT_ID/SECRET` 值前后不要有空格、不要有中文、不要加引号
+- 变量名必须完全一致（如 `BACKEND_PORT` 不能写成 `PORT`）
+
+**4) 清理隐藏字符（可选但推荐）**
+```bash
+LC_ALL=C tr -d '\r' < .env | sed '1s/^\xEF\xBB\xBF//' > /tmp/.env.clean && mv /tmp/.env.clean .env
+```
+
+**5) 关闭旧 Demo 进程（避免端口占用）并启动**
+```bash
+lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+lsof -ti:3001 | xargs kill -9 2>/dev/null || true
+
+npm run demo:ecommerce
+```
+
+### 验证成功
+- 终端显示 "Ecommerce shop backend listening on port 3001"
+- 浏览器访问 http://127.0.0.1:3000
+
+---
+
 ## 1. 常见症状
 
 - 启动脚本报错（统一落在 ts-node 启动时）：
