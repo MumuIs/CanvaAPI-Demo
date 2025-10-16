@@ -6,6 +6,7 @@ const envVars = [
   "CANVA_CLIENT_SECRET",
   "DATABASE_ENCRYPTION_KEY",
   "BASE_CANVA_CONNECT_API_URL",
+  "BASE_CANVA_CONNECT_AUTH_URL",
 ];
 
 export const validateEnvironmentVariables = () => {

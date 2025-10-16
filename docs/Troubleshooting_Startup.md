@@ -23,7 +23,7 @@ nvm use 20  # 或 nvm install 20 && nvm use 20
 node -v     # 确认 v20.x
 ```
 
-**3) 编辑 .env（7 个必填变量，严格按模板填写）**
+**3) 编辑 .env（8 个必填变量，严格按模板填写）**
 ```bash
 cd ~/CanvaAPI-Demo/canva-connect-api-starter-kit
 open -e .env
@@ -35,6 +35,7 @@ BACKEND_PORT=3001
 BACKEND_URL=http://127.0.0.1:3001
 FRONTEND_URL=http://127.0.0.1:3000
 BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
+BASE_CANVA_CONNECT_AUTH_URL=https://www.canva.cn/api
 
 CANVA_CLIENT_ID=粘贴完整ClientId
 CANVA_CLIENT_SECRET=粘贴完整ClientSecret
@@ -43,7 +44,7 @@ DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678
 ```
 
 关键点：
-- `BASE_CANVA_CONNECT_API_URL` 必须带 `/v1`（非中国区用 `https://api.canva.com/rest/v1`）
+- `BASE_CANVA_CONNECT_API_URL` 必须带 `/v1`；`BASE_CANVA_CONNECT_AUTH_URL` 必须带 `/api`（非中国区用 canva.com）
 - `CANVA_CLIENT_ID/SECRET` 值前后不要有空格、不要有中文、不要加引号
 - 变量名必须完全一致（如 `BACKEND_PORT` 不能写成 `PORT`）
 
@@ -91,12 +92,13 @@ npm run demo:ecommerce
 ## 3. 必填环境变量（以源码校验为准）
 校验文件：`canva-connect-api-starter-kit/demos/common/scripts/env.ts`
 
-必须 7 项（变量名必须完全一致）：
+必须 8 项（变量名必须完全一致）：
 ```env
 BACKEND_PORT=3001
 BACKEND_URL=http://127.0.0.1:3001
 FRONTEND_URL=http://127.0.0.1:3000
-BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1  # 非中国区可用 https://api.canva.com/rest/v1
+BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1  # 非中国区用 https://api.canva.com/rest/v1
+BASE_CANVA_CONNECT_AUTH_URL=https://www.canva.cn/api    # 非中国区用 https://www.canva.com/api
 
 CANVA_CLIENT_ID=你的真实ClientId（完整、不加引号/空格）
 CANVA_CLIENT_SECRET=你的真实ClientSecret（完整、不加引号/空格）
@@ -104,7 +106,7 @@ CANVA_CLIENT_SECRET=你的真实ClientSecret（完整、不加引号/空格）
 DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678  # 任意非空随机串，建议≥32字符
 ```
 
-注意：`BASE_CANVA_CONNECT_API_URL` 必须带 `/v1`，否则易 404/校验失败。
+注意：`BASE_CANVA_CONNECT_API_URL` 必须带 `/v1`；`BASE_CANVA_CONNECT_AUTH_URL` 必须带 `/api`。
 
 ## 4. 快速修复步骤
 

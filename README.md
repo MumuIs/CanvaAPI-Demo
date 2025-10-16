@@ -33,14 +33,15 @@ git config --global credential.helper osxkeychain
 
 ```bash
 cd canva-connect-api-starter-kit
-cp .env.example .env
-# 编辑 .env：
-# PORT=3001
+# 创建 .env 并填写 8 个必填变量（不要引号/空格/中文）：
+# BACKEND_PORT=3001
 # BACKEND_URL=http://127.0.0.1:3001
+# FRONTEND_URL=http://127.0.0.1:3000
 # BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
-# CANVA_CLIENT_ID=xxx
-# CANVA_CLIENT_SECRET=yyy
-# WEBHOOK_SECRET=dev-secret
+# BASE_CANVA_CONNECT_AUTH_URL=https://www.canva.cn/api
+# CANVA_CLIENT_ID=你的真实ClientId
+# CANVA_CLIENT_SECRET=你的真实ClientSecret
+# DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678
 
 npm ci
 npm run demo:ecommerce
