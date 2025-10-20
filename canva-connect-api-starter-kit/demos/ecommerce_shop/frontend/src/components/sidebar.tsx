@@ -37,6 +37,12 @@ export const SideBar = () => {
 
   const sidebarItems = [
     {
+      text: "API 概览",
+      Icon: ApiOutlinedIcon,
+      route: Paths.API_OVERVIEW,
+      disabled: false,
+    },
+    {
       text: "首页",
       Icon: HomeOutlinedIcon,
       route: Paths.HOME,
@@ -71,12 +77,6 @@ export const SideBar = () => {
       Icon: CollectionsBookmarkOutlinedIcon,
       route: Paths.CONTENT_LIBRARY,
       disabled: !isAuthorized,
-    },
-    {
-      text: "API 概览",
-      Icon: ApiOutlinedIcon,
-      route: Paths.API_OVERVIEW,
-      disabled: false,
     },
     
   ];

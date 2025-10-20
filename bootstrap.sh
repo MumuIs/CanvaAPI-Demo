@@ -27,7 +27,7 @@ if [ ! -f "$KIT_DIR/.env" ]; then
 BACKEND_PORT=3001
 BACKEND_URL=http://127.0.0.1:3001
 FRONTEND_URL=http://127.0.0.1:3000
-BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
+BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest
 BASE_CANVA_CONNECT_AUTH_URL=https://www.canva.cn/api
 
 CANVA_CLIENT_ID=

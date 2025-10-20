@@ -140,7 +140,7 @@ cd CanvaAPI-Demo</pre></div>
         <div class="block small"><pre style="margin:0;white-space:pre-wrap;">BACKEND_PORT=3001
 BACKEND_URL=http://127.0.0.1:3001
 FRONTEND_URL=http://127.0.0.1:3000
-BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
+BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest
 BASE_CANVA_CONNECT_AUTH_URL=https://www.canva.cn/api
 
 CANVA_CLIENT_ID=粘贴完整的ClientId
@@ -148,13 +148,43 @@ CANVA_CLIENT_SECRET=粘贴完整的ClientSecret
 
 DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678</pre></div>
         <p class="muted small">备注：
-          <br/>1) <span class="code">BASE_CANVA_CONNECT_API_URL</span> 必须带 <span class="code">/v1</span>；<span class="code">BASE_CANVA_CONNECT_AUTH_URL</span> 必须带 <span class="code">/api</span>（非中国区用 canva.com）
+          <br/>1) <span class="code">BASE_CANVA_CONNECT_API_URL</span> 不需要带 <span class="code">/v1</span>（代码会自动添加）；<span class="code">BASE_CANVA_CONNECT_AUTH_URL</span> 必须带 <span class="code">/api</span>（非中国区用 canva.com）
           <br/>2) 首次运行 <span class="code">./bootstrap.sh</span> 若未检测到 <span class="code">.env</span>，将自动生成最小模板并退出，请先填写再重新运行脚本。
           <br/>3) 负责人需在 Canva 应用后台配置回调 <span class="code">http://127.0.0.1:3001/oauth/redirect</span>。
         </p>
       </div>
 
-      <h2>四、启动与使用</h2>
+      <h2>四、.env 配置验证（首次必做）</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="title">验证 .env 文件是否被正确读取</div>
+          <p>在启动前，建议先验证环境变量配置是否正确：</p>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;"># 1. 确认 .env 文件位置（应只有一个）
+cd ~/CanvaAPI-Demo
+/usr/bin/find canva-connect-api-starter-kit -maxdepth 2 -name ".env*" -print
+
+# 2. 检查 CLIENT_ID 和 SECRET 长度与前缀（不显示完整值）
+node -e "require('./canva-connect-api-starter-kit/node_modules/dotenv').config({path:'canva-connect-api-starter-kit/.env'});const r=v=>({len:(v||'').length,head:(v||'').slice(0,8)});console.log({ID:r(process.env.CANVA_CLIENT_ID),SECRET:r(process.env.CANVA_CLIENT_SECRET)})"
+
+# 3. 检查 API URL 配置
+grep '^BASE_CANVA_CONNECT_API_URL=' canva-connect-api-starter-kit/.env</pre></div>
+          <p class="muted small"><strong>预期结果：</strong></p>
+          <p class="muted small">- CLIENT_ID 长度应为 15-20 左右，前缀类似 <span class="code">OC-AZbW7</span></p>
+          <p class="muted small">- CLIENT_SECRET 长度应为 60+ 字符</p>
+          <p class="muted small">- API URL 应为 <span class="code">https://api.canva.cn/rest</span>（不带 /v1）</p>
+        </div>
+        <div class="step">
+          <div class="title">常见配置错误修复</div>
+          <p class="muted small"><strong>如果 CLIENT_ID/SECRET 长度为 0 或很小：</strong></p>
+          <p class="small">说明值为空或被截断，请从 Canva 开发者控制台重新完整复制，不要有空格、引号、中文字符。</p>
+          <p class="muted small"><strong>如果值包含隐藏字符（如回车、BOM）：</strong></p>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;"># 清理隐藏字符
+cd ~/CanvaAPI-Demo/canva-connect-api-starter-kit
+LC_ALL=C tr -d '\r' < .env | sed '1s/^\xEF\xBB\xBF//' > /tmp/.env.clean && mv /tmp/.env.clean .env</pre></div>
+        </div>
+      </div>
+
+      <h2>五、启动与使用</h2>
       <div class="steps">
         <div class="step">
           <div class="title">5) 若未在运行，手动启动</div>
@@ -168,33 +198,50 @@ DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678</pre></div>
         </div>
       </div>
 
-      <h2>常见问题</h2>
+      <h2>六、更新项目（拉取最新版本）</h2>
       <div class="steps">
         <div class="step">
-          <div class="title">A. 启动报错：Placeholder environment variable</div>
-          <p>原因：.env 变量名错误/缺项/值含空格中文/少 /v1。</p>
-          <p class="small">修复：确保使用 Node 20、git pull 拉最新代码、严格按上方 7 变量模板填写、去掉空格与中文。</p>
+          <div class="title">推荐：一键更新脚本 ⭐</div>
+          <p>最简单的方式，自动完成所有更新步骤：</p>
+          <div class="block"><code>cd CanvaAPI-Demo<br/>./update.sh</code></div>
+          <p class="muted small">脚本会自动：拉取最新代码 → 更新依赖 → 停止旧服务 → 启动新服务</p>
+          <p class="muted small">提示：<span class="code">.env</span> 配置文件不会被覆盖，保留你的本地配置。</p>
         </div>
         <div class="step">
-          <div class="title">B. 授权失败</div>
-          <p>核对 .env 的 <span class="code">CANVA_CLIENT_ID/SECRET</span> 是否完整正确；确认 Canva 应用已配置回调。</p>
+          <div class="title">或手动更新（分步执行）</div>
+          <p>如果需要更精细的控制，可以分步执行：</p>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;"># 进入项目目录
+cd CanvaAPI-Demo
+
+# 1. 拉取最新代码
+git pull
+
+# 2. 更新依赖（如果 package.json 有变化）
+cd canva-connect-api-starter-kit
+npm ci
+
+# 3. 重启服务（先 Ctrl+C 停止当前服务，然后执行）
+npm run demo:ecommerce</pre></div>
         </div>
         <div class="step">
-          <div class="title">C. 端口占用 (EADDRINUSE)</div>
-          <p>先清理旧进程：<span class="code">lsof -ti:3000 | xargs kill -9; lsof -ti:3001 | xargs kill -9</span></p>
-          <p class="small">或修改 .env 的 <span class="code">BACKEND_PORT</span>（如 3002），保存后重启。</p>
-        </div>
-        <div class="step">
-          <div class="title">D. 网络限制</div>
-          <p>需能访问 <span class="code">https://api.canva.cn/</span>；如公司网络限制，请走可访问的网络或代理。</p>
-        </div>
-        <div class="step">
-          <div class="title">E. 更多排查</div>
-          <p>参考 <span class="code">docs/Troubleshooting_Startup.md</span> 获取完整修复步骤、诊断命令与已验证的解决方案。</p>
+          <div class="title">遇到问题时：完全清理重装</div>
+          <p>如果更新后出现异常，可以清理并重新安装：</p>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;"># 停止所有服务
+lsof -ti:3000 | xargs kill -9 2>/dev/null
+lsof -ti:3001 | xargs kill -9 2>/dev/null
+
+# 清理并重新安装
+cd canva-connect-api-starter-kit
+rm -rf node_modules package-lock.json
+npm install
+npm run demo:ecommerce</pre></div>
         </div>
       </div>
 
-      <p class="muted small" style="margin-top:12px;">版本：v0.1.0-teammates-quickstart · 如需帮助请联系项目负责人。</p>
+      <p class="muted small" style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);">
+        <strong>遇到问题？</strong> 参考 <span class="code">docs/Troubleshooting_Startup.md</span> 获取完整修复步骤、诊断命令与已验证的解决方案。
+      </p>
+      <p class="muted small" style="margin-top:12px;">版本：v0.3.0-teammates-quickstart · 如需帮助请联系项目负责人。</p>
     </main>
   </body>
   </html>

@@ -6,7 +6,7 @@
 
 ### 问题根因
 - .env 必填变量不匹配源码校验（变量名错误/缺项/值含空格中文）
-- BASE_CANVA_CONNECT_API_URL 少了 /v1
+- BASE_CANVA_CONNECT_API_URL 配置错误
 - CANVA_CLIENT_ID/SECRET 值有前后空格或被截断
 
 ### 5 步修复（已在本机验证通过）
@@ -34,7 +34,7 @@ open -e .env
 BACKEND_PORT=3001
 BACKEND_URL=http://127.0.0.1:3001
 FRONTEND_URL=http://127.0.0.1:3000
-BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1
+BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest
 BASE_CANVA_CONNECT_AUTH_URL=https://www.canva.cn/api
 
 CANVA_CLIENT_ID=粘贴完整ClientId
@@ -44,7 +44,7 @@ DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678
 ```
 
 关键点：
-- `BASE_CANVA_CONNECT_API_URL` 必须带 `/v1`；`BASE_CANVA_CONNECT_AUTH_URL` 必须带 `/api`（非中国区用 canva.com）
+- `BASE_CANVA_CONNECT_API_URL` 不需要带 `/v1`（代码会自动添加）；`BASE_CANVA_CONNECT_AUTH_URL` 必须带 `/api`（非中国区用 canva.com）
 - `CANVA_CLIENT_ID/SECRET` 值前后不要有空格、不要有中文、不要加引号
 - 变量名必须完全一致（如 `BACKEND_PORT` 不能写成 `PORT`）
 
@@ -97,7 +97,7 @@ npm run demo:ecommerce
 BACKEND_PORT=3001
 BACKEND_URL=http://127.0.0.1:3001
 FRONTEND_URL=http://127.0.0.1:3000
-BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest/v1  # 非中国区用 https://api.canva.com/rest/v1
+BASE_CANVA_CONNECT_API_URL=https://api.canva.cn/rest  # 非中国区用 https://api.canva.com/rest/v1
 BASE_CANVA_CONNECT_AUTH_URL=https://www.canva.cn/api    # 非中国区用 https://www.canva.com/api
 
 CANVA_CLIENT_ID=你的真实ClientId（完整、不加引号/空格）
@@ -106,7 +106,7 @@ CANVA_CLIENT_SECRET=你的真实ClientSecret（完整、不加引号/空格）
 DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678  # 任意非空随机串，建议≥32字符
 ```
 
-注意：`BASE_CANVA_CONNECT_API_URL` 必须带 `/v1`；`BASE_CANVA_CONNECT_AUTH_URL` 必须带 `/api`。
+注意：`BASE_CANVA_CONNECT_API_URL` 不需要带 `/v1`（代码会自动添加）；`BASE_CANVA_CONNECT_AUTH_URL` 必须带 `/api`。
 
 ## 4. 快速修复步骤
 
@@ -160,7 +160,7 @@ node -v && npm -v
 # 仅列出 .env 路径，确认唯一
 /usr/bin/find canva-connect-api-starter-kit -maxdepth 2 -name ".env*" -print
 
-# 检查 BASE_CANVA_CONNECT_API_URL 是否带 /v1
+# 检查 BASE_CANVA_CONNECT_API_URL 配置（应为 https://api.canva.cn/rest）
 grep '^BASE_CANVA_CONNECT_API_URL=' canva-connect-api-starter-kit/.env
 
 # 检查 ID/SECRET 被读取的长度与前缀（隐去完整值）
@@ -173,8 +173,8 @@ node -e "require('./canva-connect-api-starter-kit/node_modules/dotenv').config({
   - 原因：值为空、仍为占位 `<VAR>`、复制被截断、含隐藏字符
 - Cannot find module 'dotenv'：
   - 仅在你用 `node -e "require('dotenv')"` 自检时报，全局没装；不影响项目。用上面的“项目内依赖路径”命令即可
-- BASE_CANVA_CONNECT_API_URL 缺 `/v1`：
-  - 必须为 `.../rest/v1`
+- BASE_CANVA_CONNECT_API_URL 配置错误：
+  - 应为 `https://api.canva.cn/rest`（不需要 `/v1`，代码会自动添加）
 
 ---
 若仍无法启动，请提供以下输出（可隐去中间字符）：
