@@ -1,8 +1,9 @@
-import type { BrandTemplate, Design } from "@canva/connect-api-ts/types.gen";
+import type { BrandTemplate, Design, GetDesignAutofillJobResponse } from "@canva/connect-api-ts/types.gen";
 import type { Client } from "@hey-api/client-fetch";
-import { BrandTemplateService as CanvaBrandTemplateService, DesignService } from "@canva/connect-api-ts";
+import { BrandTemplateService as CanvaBrandTemplateService, AutofillService } from "@canva/connect-api-ts";
 import { createNavigateToCanvaUrl } from "./canva-return";
 import type { CorrelationState } from "src/models";
+import { poll } from "../../../../common/utils/poll";
 
 export class BrandTemplates {
   constructor(private client: Client) {}
@@ -20,6 +21,17 @@ export class BrandTemplates {
       continuation = next.data.continuation;
     }
     return items;
+  }
+
+  /**
+   * 直接使用品牌模板的 create_url 打开（不保留 return_nav）。
+   */
+  async openTemplateCreateUrl(brandTemplateId: string): Promise<void> {
+    const tpl = await this.getBrandTemplate(brandTemplateId);
+    if (!tpl.create_url) {
+      throw new Error("该品牌模板缺少 create_url，无法直接打开。");
+    }
+    window.open(tpl.create_url, "_blank", "width=1200,height=800,scrollbars=yes,resizable=yes");
   }
 
   async getBrandTemplate(brandTemplateId: string): Promise<BrandTemplate> {
@@ -48,15 +60,33 @@ export class BrandTemplates {
     brandTemplateId: string,
     correlationState: CorrelationState,
   ): Promise<{ design: Design; navigateUrl: string }> {
-    const result = await DesignService.createDesign({
+    // 使用 Autofill API 基于品牌模板创建新设计（可传空数据集）
+    const start = await AutofillService.createDesignAutofillJob({
       client: this.client,
+      path: { brandTemplateId },
       body: {
-        title: `Brand Template Design - ${brandTemplateId}`,
-        design_type: { type: "preset", name: "presentation" },
+        brand_template_id: brandTemplateId,
+        // 可选：title 不传则沿用模板标题
+        // title: `Brand Template Design - ${brandTemplateId}`
+        data: {},
       },
     });
-    if (result.error) throw new Error(result.error.message);
-    const design = result.data.design;
+    if (start.error) throw new Error(start.error.message);
+
+    const job = await poll(async (): Promise<GetDesignAutofillJobResponse> => {
+      const r = await AutofillService.getDesignAutofillJob({
+        client: this.client,
+        path: { jobId: start.data.job.id },
+      });
+      if (r.error) throw new Error(r.error.message);
+      return r.data;
+    }, 1000, 30_000);
+
+    if (job.job.status !== "success" || job.result?.type !== "create_design") {
+      throw new Error("Autofill job did not succeed.");
+    }
+
+    const design = job.result.design as Design;
     const url = this.createUrlWithReturnNav(design.urls.edit_url, correlationState);
     window.open(url.toString(), "_blank", "width=1200,height=800,scrollbars=yes,resizable=yes");
     return { design, navigateUrl: url.toString() };

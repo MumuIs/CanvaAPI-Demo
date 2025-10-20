@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { BrandTemplate } from "@canva/connect-api-ts/types.gen";
-import { Box, Card, CardContent, CardMedia, CircularProgress, Grid, Stack, Typography, Alert } from "@mui/material";
+import { Box, Card, CardContent, CardMedia, CircularProgress, Grid, Stack, Typography, Alert, Button } from "@mui/material";
 import { useAppContext } from "src/context";
 import { PageDescriptor } from "src/components";
 import type { CorrelationState } from "src/models";
@@ -58,7 +58,7 @@ export const BrandTemplateCreatorPage = (): JSX.Element => {
           <Grid container spacing={2}>
             {brandTemplates.map((template) => (
               <Grid item xs={12} sm={6} md={4} key={template.id}>
-                <Card sx={{ height: "100%" }}>
+                <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
                   <CardMedia
                     component="img"
                     height="200"
@@ -66,7 +66,7 @@ export const BrandTemplateCreatorPage = (): JSX.Element => {
                     alt={template.title}
                     sx={{ objectFit: "contain" }}
                   />
-                  <CardContent>
+                  <CardContent sx={{ flexGrow: 1 }}>
                     <Typography variant="h6" gutterBottom>
                       {template.title}
                     </Typography>
@@ -77,6 +77,22 @@ export const BrandTemplateCreatorPage = (): JSX.Element => {
                       创建时间: {new Date(template.created_at * 1000).toLocaleDateString()}
                     </Typography>
                   </CardContent>
+                  <Box padding={2} pt={0} display="flex" gap={1}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={async () => {
+                        try {
+                          await services.brandTemplates.openTemplateCreateUrl(template.id);
+                        } catch (e) {
+                          console.error(e);
+                          addAlert({ title: "打开模板失败", variant: "error" });
+                        }
+                      }}
+                    >
+                      用此模板创建
+                    </Button>
+                  </Box>
                 </Card>
               </Grid>
             ))}
