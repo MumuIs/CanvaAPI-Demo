@@ -45,7 +45,7 @@ export const BrandTemplateCreatorPage = (): JSX.Element => {
     <Box padding={4}>
       <PageDescriptor
         title="品牌模板"
-        description="浏览并读取你组织的品牌模板：标题、缩略图、创建时间、ID 等信息。此处不提供创建设计操作。"
+        description="浏览并读取你组织的品牌模板：标题、缩略图、创建时间、ID 等信息。"
       />
 
       <Stack spacing={3}>
