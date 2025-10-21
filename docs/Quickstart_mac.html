@@ -125,17 +125,22 @@ cd CanvaAPI-Demo</pre></div>
 
       <h2>三、填写 .env（仅首次）</h2>
       <div class="step">
-        <p>文件位置：<span class="code">CanvaAPI-Demo/canva-connect-api-starter-kit/.env</span></p>
+        <p><strong style="color:#d32f2f;">⚠️ 重要：.env 文件位置必须正确</strong></p>
+        <p>正确路径：<span class="code" style="background-color:#fff3cd;padding:2px 6px;font-weight:600;">CanvaAPI-Demo/canva-connect-api-starter-kit/.env</span></p>
+        <p class="muted small">注意：<strong>不是</strong> <span class="code" style="text-decoration:line-through;">demos/ecommerce_shop/.env</span>（此文件不会被读取）</p>
+        
         <div class="cols">
           <div>
-            <p>打开方式 A（VS Code）：</p>
-            <div class="block"><code>open -a "Visual Studio Code" canva-connect-api-starter-kit/.env</code></div>
+            <p>打开方式 A（VS Code，推荐）：</p>
+            <div class="block"><code>cd ~/CanvaAPI-Demo<br/>open -a "Visual Studio Code" canva-connect-api-starter-kit/.env</code></div>
           </div>
           <div>
             <p>打开方式 B（文本编辑）：</p>
-            <div class="block"><code>open -e canva-connect-api-starter-kit/.env</code></div>
+            <div class="block"><code>cd ~/CanvaAPI-Demo<br/>open -e canva-connect-api-starter-kit/.env</code></div>
           </div>
         </div>
+        <p class="muted small">💡 小技巧：如果不确定打开的是否为正确文件，可以先执行 <span class="code">cd ~/CanvaAPI-Demo</span> 确保在项目根目录。</p>
+      </div>
         <p>把下列内容粘贴到 .env（替换为负责人提供的真实值；变量名需与源码校验一致，合计 8 项）：</p>
         <div class="block small"><pre style="margin:0;white-space:pre-wrap;">BACKEND_PORT=3001
 BACKEND_URL=http://127.0.0.1:3001

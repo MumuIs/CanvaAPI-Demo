@@ -36,7 +36,20 @@ CANVA_CLIENT_SECRET=
 DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678
 EOF
   fi
-  echo "[INFO] 已创建 $KIT_DIR/.env。请填入 CANVA_CLIENT_ID / CANVA_CLIENT_SECRET 后重跑本脚本。"
+  echo ""
+  echo "================================================================"
+  echo "[INFO] 已创建 .env 文件："
+  echo "       $KIT_DIR/.env"
+  echo ""
+  echo "⚠️  请先填写 CANVA_CLIENT_ID 和 CANVA_CLIENT_SECRET"
+  echo ""
+  echo "打开方式："
+  echo "  VS Code:     open -a \"Visual Studio Code\" \"$KIT_DIR/.env\""
+  echo "  文本编辑:     open -e \"$KIT_DIR/.env\""
+  echo ""
+  echo "填写完成后，重新运行：./bootstrap.sh"
+  echo "================================================================"
+  echo ""
   exit 0
 fi
 
