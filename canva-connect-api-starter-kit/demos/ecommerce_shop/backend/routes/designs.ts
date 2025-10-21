@@ -1,6 +1,6 @@
 import express from "express";
 import { DesignService } from "@canva/connect-api-ts";
-import { injectClient } from "../../../common/backend/middleware/inject-client";
+import { injectClient } from "../../../common/backend/middleware/client";
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.get("/designs/list", injectClient, async (req, res) => {
     }
 
     return res.json({
-      designs: result.data.designs,
+      designs: result.data?.items || [],
     });
   } catch (error) {
     console.error("List designs exception:", error);
