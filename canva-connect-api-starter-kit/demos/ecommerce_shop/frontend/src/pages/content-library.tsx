@@ -43,7 +43,9 @@ const ContentLibraryPage = (): JSX.Element => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Origin': window.location.origin,
         },
+        credentials: 'include', // 包含 cookies
       });
 
       if (!response.ok) {
