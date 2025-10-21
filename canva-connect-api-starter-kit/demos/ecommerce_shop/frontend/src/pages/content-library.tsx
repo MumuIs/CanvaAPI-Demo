@@ -125,9 +125,35 @@ const ContentLibraryPage = (): JSX.Element => {
                 <Card>
                   <CardContent>
                     <Stack spacing={1}>
-                      {d.thumb && (
-                        <img src={d.thumb} alt={d.title} style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(0,0,0,0.06)" }} />
-                      )}
+                      <Box 
+                        sx={{ 
+                          width: "100%", 
+                          height: 160, 
+                          borderRadius: 2, 
+                          border: "1px solid rgba(0,0,0,0.06)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "rgba(0,0,0,0.02)"
+                        }}
+                      >
+                        {d.thumb ? (
+                          <img 
+                            src={d.thumb} 
+                            alt={d.title} 
+                            style={{ 
+                              width: "100%", 
+                              height: "100%", 
+                              objectFit: "cover", 
+                              borderRadius: 8 
+                            }} 
+                          />
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">
+                            暂无缩略图
+                          </Typography>
+                        )}
+                      </Box>
                       <Typography fontWeight={600}>{d.title || d.id}</Typography>
                       <Typography variant="caption" color="text.secondary">
                         创建时间：{new Date(d.createdAt).toLocaleString()}

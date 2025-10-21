@@ -15,7 +15,7 @@ export const PublishDialog = ({
     <Dialog
       open={isOpen}
       onClose={() => onOpenChange(false)}
-      maxWidth="sm"
+      maxWidth="md"
       PaperProps={{
         sx: {
           bgcolor: (t) => t.palette.background.paper,
