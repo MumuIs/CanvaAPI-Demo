@@ -38,7 +38,8 @@ const ContentLibraryPage = (): JSX.Element => {
     setIsSyncing(true);
     try {
       // 使用 Canva SDK 的 listDesigns API
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:3001'}/designs/list`, {
+      const backendUrl = 'http://127.0.0.1:3001'; // 直接使用固定URL
+      const response = await fetch(`${backendUrl}/designs/list`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
