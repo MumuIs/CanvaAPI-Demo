@@ -13,9 +13,15 @@ router.use((req, res, next) => injectClient(req, res, next, db));
  * 获取用户所有设计列表
  */
 router.get("/designs/list", async (req, res) => {
+  console.log("GET /designs/list - 开始请求");
   try {
     const result = await DesignService.listDesigns({
       client: req.client,
+    });
+
+    console.log("List designs result:", { 
+      hasError: !!result.error, 
+      itemsCount: result.data?.items?.length || 0 
     });
 
     if (result.error) {
@@ -25,8 +31,11 @@ router.get("/designs/list", async (req, res) => {
       });
     }
 
+    const designs = result.data?.items || [];
+    console.log(`返回 ${designs.length} 个设计`);
+    
     return res.json({
-      designs: result.data?.items || [],
+      designs: designs,
     });
   } catch (error) {
     console.error("List designs exception:", error);
