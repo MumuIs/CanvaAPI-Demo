@@ -4,6 +4,7 @@ import { useAppContext } from "src/context";
 import { PageDescriptor } from "src/components";
 import { createNavigateToCanvaUrl } from "src/services/canva-return";
 import { EditInCanvaPageOrigins } from "src/models";
+import { saveDesignToContentLibrary } from "src/utils/content-library";
 
 const UploadsPage = (): JSX.Element => {
   const { isAuthorized, services, addAlert } = useAppContext();
@@ -55,11 +56,8 @@ const UploadsPage = (): JSX.Element => {
       window.open(navigateToCanvaUrl.toString(), "_blank");
       addAlert({ title: "已基于素材创建设计并打开编辑", variant: "success" });
 
-      // 记录到内容库
-      const raw = localStorage.getItem("content_library_designs");
-      const list = raw ? (JSON.parse(raw) as Array<{ id: string; title: string; createdAt: number; editUrl: string; thumb?: string }>) : [];
-      list.unshift({ id: design.id, title: design.title, createdAt: Date.now(), editUrl: design.urls.edit_url, thumb: design.thumbnail?.url });
-      localStorage.setItem("content_library_designs", JSON.stringify(list.slice(0, 100)));
+      // 保存到内容库
+      saveDesignToContentLibrary(design);
     } catch (e) {
       console.error(e);
       addAlert({ title: "创建设计失败", variant: "error" });

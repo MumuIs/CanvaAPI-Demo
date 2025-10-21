@@ -10,6 +10,7 @@ import {
   PublishDialog,
 } from "src/components";
 import { useAppContext, useCampaignContext } from "src/context";
+import { saveDesignToContentLibrary } from "src/utils/content-library";
 
 export const MultipleDesignsGeneratorPage = () => {
   const {
@@ -87,20 +88,24 @@ export const MultipleDesignsGeneratorPage = () => {
             const response = await services.designs.getDesign(
               result.value.job.result.design.id,
             );
+            const designWithThumb = {
+              ...response.design,
+              /**
+               * A design created from an autoFill request doesn't have a design.thumbnail,
+               * whereas the auto-fill job result does.  Falling back to the job result
+               * thumbnail where design thumbnail is undefined
+               */
+              thumbnail:
+                response.design.thumbnail ??
+                result.value.job.result?.design.thumbnail,
+            };
             setMarketingMultiDesignResults((currentDesigns) => [
               ...currentDesigns,
-              {
-                ...response.design,
-                /**
-                 * A design created from an autoFill request doesn't have a design.thumbnail,
-                 * whereas the auto-fill job result does.  Falling back to the job result
-                 * thumbnail where design thumbnail is undefined
-                 */
-                thumbnail:
-                  response.design.thumbnail ??
-                  result.value.job.result?.design.thumbnail,
-              },
+              designWithThumb,
             ]);
+            
+            // 保存到内容库
+            saveDesignToContentLibrary(designWithThumb);
           }
         }
       });

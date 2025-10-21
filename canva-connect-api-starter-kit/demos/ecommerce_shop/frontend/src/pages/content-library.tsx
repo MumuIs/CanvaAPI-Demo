@@ -1,24 +1,18 @@
 import { useEffect, useState } from "react";
-import { Box, Card, CardContent, Grid, Stack, Typography, Button } from "@mui/material";
+import { Box, Card, CardContent, Grid, Stack, Typography, Button, CircularProgress } from "@mui/material";
 import { PageDescriptor } from "src/components";
 import { useAppContext } from "src/context";
 import { createNavigateToCanvaUrl } from "src/services/canva-return";
 import { EditInCanvaPageOrigins } from "src/models";
-
-type SavedDesign = { id: string; title: string; editUrl: string; createdAt: number; thumb?: string };
+import { type SavedDesign, loadDesignsFromContentLibrary, clearContentLibrary } from "src/utils/content-library";
 
 const ContentLibraryPage = (): JSX.Element => {
-  const { isAuthorized, addAlert } = useAppContext();
+  const { isAuthorized, addAlert, services } = useAppContext();
   const [designs, setDesigns] = useState<SavedDesign[]>([]);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("content_library_designs");
-      const list = raw ? (JSON.parse(raw) as SavedDesign[]) : [];
-      setDesigns(list);
-    } catch {
-      setDesigns([]);
-    }
+    setDesigns(loadDesignsFromContentLibrary());
   }, []);
 
   const openDesign = (d: SavedDesign) => {
@@ -30,9 +24,64 @@ const ContentLibraryPage = (): JSX.Element => {
   };
 
   const clearAll = () => {
-    localStorage.removeItem("content_library_designs");
+    clearContentLibrary();
     setDesigns([]);
     addAlert({ title: "已清空内容库", variant: "info" });
+  };
+
+  const syncUserDesigns = async () => {
+    if (!isAuthorized) {
+      addAlert({ title: "请先连接 Canva", variant: "warning" });
+      return;
+    }
+
+    setIsSyncing(true);
+    try {
+      // 使用 listDesigns API 获取用户所有设计
+      const result = await services.client.GET("/v1/designs");
+      
+      if (result.error) {
+        throw new Error(result.error.message || "获取设计列表失败");
+      }
+
+      const userDesigns = result.data?.designs || [];
+      
+      // 转换为 SavedDesign 格式
+      const newDesigns: SavedDesign[] = userDesigns.map(design => ({
+        id: design.id,
+        title: design.title || "Untitled",
+        editUrl: design.urls.edit_url,
+        createdAt: design.created_at * 1000, // 转换为毫秒
+        thumb: design.thumbnail?.url,
+      }));
+
+      // 合并现有设计和用户设计，去重
+      const existingDesigns = designs;
+      const mergedDesigns = [...existingDesigns];
+      
+      newDesigns.forEach(newDesign => {
+        if (!mergedDesigns.find(d => d.id === newDesign.id)) {
+          mergedDesigns.push(newDesign);
+        }
+      });
+
+      // 按创建时间排序（最新的在前）
+      mergedDesigns.sort((a, b) => b.createdAt - a.createdAt);
+
+      setDesigns(mergedDesigns);
+      localStorage.setItem("content_library_designs", JSON.stringify(mergedDesigns));
+      
+      const addedCount = newDesigns.filter(nd => !existingDesigns.find(ed => ed.id === nd.id)).length;
+      addAlert({ 
+        title: `同步完成，新增 ${addedCount} 个设计`, 
+        variant: "success" 
+      });
+    } catch (error) {
+      console.error("同步设计失败:", error);
+      addAlert({ title: "同步失败，请重试", variant: "error" });
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   return (
@@ -43,10 +92,23 @@ const ContentLibraryPage = (): JSX.Element => {
           <Typography variant="body2" color="text.secondary">
             共 {designs.length} 个设计
           </Typography>
-          <Button size="small" onClick={clearAll} disabled={designs.length === 0}>清空</Button>
+          <Box display="flex" gap={1}>
+            <Button 
+              size="small" 
+              variant="outlined"
+              onClick={syncUserDesigns}
+              disabled={isSyncing || !isAuthorized}
+              startIcon={isSyncing ? <CircularProgress size={16} /> : undefined}
+            >
+              {isSyncing ? "同步中..." : "同步我的设计"}
+            </Button>
+            <Button size="small" onClick={clearAll} disabled={designs.length === 0}>清空</Button>
+          </Box>
         </Box>
         {designs.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">暂无通过 API 创建的设计</Typography>
+          <Typography variant="body2" color="text.secondary">
+            {isAuthorized ? "暂无设计，点击上方\"同步我的设计\"获取你的所有设计" : "请先连接 Canva 以同步设计"}
+          </Typography>
         ) : (
           <Grid container={true} spacing={2}>
             {designs.map((d) => (

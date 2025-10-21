@@ -16,6 +16,7 @@ import {
 import { useAppContext, useCampaignContext } from "src/context";
 import { DesignResult } from "src/components/marketing/design-result";
 import { EditInCanvaPageOrigins } from "src/models";
+import { saveDesignToContentLibrary } from "src/utils/content-library";
 
 export const SingleDesignGeneratorPage = () => {
   const { campaignName } = useCampaignContext();
@@ -54,6 +55,10 @@ export const SingleDesignGeneratorPage = () => {
           });
       setCreatedSingleDesign(design.design);
       setIsFirstGenerated(true);
+      
+      // 保存到内容库
+      saveDesignToContentLibrary(design.design);
+      
       addAlert({
         title: `Canva design was successfully generated for '${selectedCampaignProduct.name}'.`,
         variant: "success",
