@@ -7,6 +7,7 @@ import userRoutes from "./routes/user";
 import productRoutes from "./routes/product";
 import returnNavRoutes from "./routes/return-nav";
 import exportRoutes from "./routes/export";
+import designsRoutes from "./routes/designs";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "../../common/backend/middleware/errors";
 import type { Client } from "@hey-api/client-fetch";
@@ -58,6 +59,7 @@ app.use(userRoutes);
 app.use(productRoutes);
 app.use(returnNavRoutes);
 app.use(exportRoutes);
+app.use(designsRoutes);
 
 app.set(
   "views",

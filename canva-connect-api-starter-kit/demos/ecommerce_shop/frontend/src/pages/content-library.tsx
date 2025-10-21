@@ -37,14 +37,20 @@ const ContentLibraryPage = (): JSX.Element => {
 
     setIsSyncing(true);
     try {
-      // 使用 listDesigns API 获取用户所有设计
-      const result = await services.client.GET("/v1/designs");
-      
-      if (result.error) {
-        throw new Error(result.error.message || "获取设计列表失败");
+      // 使用 Canva SDK 的 listDesigns API
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:3001'}/designs/list`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const userDesigns = result.data?.designs || [];
+      const data = await response.json();
+      const userDesigns = data.designs || [];
       
       // 转换为 SavedDesign 格式
       const newDesigns: SavedDesign[] = userDesigns.map(design => ({
