@@ -46,7 +46,7 @@ const CallToActionPaper = ({
   onClick: () => void;
 }) => {
   return (
-    <Box gap={2}>
+    <Box display="flex" flexDirection="column" height="100%">
       <DeveloperNote info={devNoteText} />
       <Paper
         variant="outlined"
@@ -57,7 +57,7 @@ const CallToActionPaper = ({
           paddingBottom: 2,
           paddingX: 4,
           borderRadius: 1,
-          height: "100%",
+          flex: 1,
           cursor: "pointer",
         }}
       >
