@@ -189,16 +189,46 @@ LC_ALL=C tr -d '\r' < .env | sed '1s/^\xEF\xBB\xBF//' > /tmp/.env.clean && mv /t
         </div>
       </div>
 
-      <h2>五、启动与使用</h2>
+      <h2>五、从终端启动/重启项目（最清晰做法）</h2>
       <div class="steps">
         <div class="step">
-          <div class="title">5) 若未在运行，手动启动</div>
-          <div class="block"><code>cd canva-connect-api-starter-kit<br/>npm ci<br/>npm run demo:ecommerce</code></div>
-          <p class="muted small">终端出现 "Ecommerce shop backend listening on port 3001" 即后端就绪。</p>
-          <p class="muted small">若提示端口占用 (EADDRINUSE)，先清理旧进程：<span class="code">lsof -ti:3000 | xargs kill -9; lsof -ti:3001 | xargs kill -9</span></p>
+          <div class="title">5) 进入正确目录（路径含空格请用引号）</div>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;"># 标准路径（推荐把仓库放在桌面下的 Project/Connect api demo）
+cd "$HOME/Desktop/Project/Connect api demo/canva-connect-api-starter-kit"
+
+# 如果不确定路径在哪，自动查找并进入第一个匹配目录
+TARGET="$(find "$HOME" -type d -name canva-connect-api-starter-kit 2>/dev/null | head -n1)"
+[ -d "$TARGET" ] && cd "$TARGET" && pwd || echo "未找到 canva-connect-api-starter-kit 目录"
+
+# 快速自检当前目录
+pwd
+ls -la | head -n 10</pre></div>
+          <p class="muted small">看到当前目录中包含 <span class="code">package.json</span> 与 <span class="code">demos/</span> 即表示路径正确。</p>
         </div>
         <div class="step">
-          <div class="title">6) 打开前端并授权</div>
+          <div class="title">6) 安装依赖（首装或无 lockfile 用 install）</div>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;"># 若当前目录存在 package-lock.json，使用
+npm ci
+
+# 若不存在 package-lock.json（首次或被清理过），使用
+npm install</pre></div>
+          <p class="muted small">提示：<span class="code">npm ci</span> 只能在存在 <span class="code">package-lock.json</span> 的目录执行；否则会报错。</p>
+        </div>
+        <div class="step">
+          <div class="title">7) 启动 Demo</div>
+          <div class="block"><code>npm run demo:ecommerce</code></div>
+          <p class="muted small">看到 "Ecommerce shop backend listening on port 3001" 表示后端成功启动；前端地址为 <span class="code">http://127.0.0.1:3000</span>。</p>
+          <p class="muted small">端口被占用 (EADDRINUSE) 时先清理旧进程：</p>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;">lsof -ti:3000 | xargs kill -9 2>/dev/null
+lsof -ti:3001 | xargs kill -9 2>/dev/null
+npm run demo:ecommerce</pre></div>
+        </div>
+        <div class="step">
+          <div class="title">8) .env 位置再次强调（最常见问题）</div>
+          <p class="muted small">.env 必须在 <span class="code">CanvaAPI-Demo/canva-connect-api-starter-kit/.env</span>，不是 <span class="code">demos/ecommerce_shop/.env</span>。缺少或位置错误会导致授权失败或端口配置不生效。</p>
+        </div>
+        <div class="step">
+          <div class="title">9) 打开前端并授权</div>
           <p>浏览器访问 <span class="code">http://127.0.0.1:3000</span>，在首页点击"连接 Canva"，按提示完成授权。</p>
         </div>
       </div>
