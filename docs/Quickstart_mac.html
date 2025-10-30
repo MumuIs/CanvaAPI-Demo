@@ -50,18 +50,9 @@
         <div class="step">
           <div class="title">A) 已配置 canva-start（推荐）</div>
           <div class="block"><code>canva-start</code></div>
-          <p class="muted small">已在第 5 章 7.2 配置过后，后续只需这一条命令。</p>
+          <p class="muted small">已在第 5 章 7.1 配置过后，后续只需这一条命令。</p>
         </div>
-        <div class="step">
-          <div class="title">B) 一次性粘贴启动（与路径无关）</div>
-          <div class="block small"><pre style="margin:0;white-space:pre-wrap;">TARGET="$(find "$HOME" -type d -name canva-connect-api-starter-kit 2>/dev/null | head -n1)" \\
-  && cd "$TARGET" \\
-  || { echo "未找到 canva-connect-api-starter-kit 目录"; exit 1; }
-[ -f package-lock.json ] && npm ci || npm install
-lsof -ti:3000 | xargs kill -9 2>/dev/null
-lsof -ti:3001 | xargs kill -9 2>/dev/null
-npm run demo:ecommerce</pre></div>
-        </div>
+        
       </div>
 
       <h2>一、安装必备软件（一次即可）</h2>
@@ -258,7 +249,7 @@ lsof -ti:3001 | xargs kill -9 2>/dev/null
 npm run demo:ecommerce</pre></div>
         </div>
         <div class="step">
-          <div class="title">7.2) 可选：配置 canva-start 命令（一次性）</div>
+          <div class="title">7.1) 可选：配置 canva-start 命令（一次性）</div>
           <p class="muted small">把下面函数添加到 <span class="code">~/.zshrc</span>，以后只需在终端输入 <span class="code">canva-start</span> 即可启动：</p>
           <div class="block small"><pre style="margin:0;white-space:pre-wrap;">canva-start() {
   local TARGET
