@@ -224,6 +224,45 @@ lsof -ti:3001 | xargs kill -9 2>/dev/null
 npm run demo:ecommerce</pre></div>
         </div>
         <div class="step">
+          <div class="title">7.1) 可复制执行：通用一键启动脚本（与路径无关）</div>
+          <p class="muted small">无论同事把仓库放在哪里，直接粘贴执行即可完成启动：</p>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;"># 1) 自动找到 canva-connect-api-starter-kit 并进入
+TARGET="$(find "$HOME" -type d -name canva-connect-api-starter-kit 2>/dev/null | head -n1)" \\
+  && cd "$TARGET" \\
+  || { echo "未找到 canva-connect-api-starter-kit 目录，请确认是否已克隆"; exit 1; }
+
+# 2) 快速自检（应有 package.json 和 demos/）
+pwd; ls -la | head -n 10
+
+# 3) 安装依赖（有 lockfile 用 ci；否则用 install）
+[ -f package-lock.json ] && npm ci || npm install
+
+# 4) 释放端口并启动
+lsof -ti:3000 | xargs kill -9 2>/dev/null
+lsof -ti:3001 | xargs kill -9 2>/dev/null
+npm run demo:ecommerce</pre></div>
+        </div>
+        <div class="step">
+          <div class="title">7.2) 可选：配置 canva-start 命令（一次性）</div>
+          <p class="muted small">把下面函数添加到 <span class="code">~/.zshrc</span>，以后只需在终端输入 <span class="code">canva-start</span> 即可启动：</p>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;">canva-start() {
+  local TARGET
+  TARGET="$(find "$HOME" -type d -name canva-connect-api-starter-kit 2>/dev/null | head -n1)" || true
+  if [ -z "$TARGET" ] || [ ! -d "$TARGET" ]; then
+    echo "未找到 canva-connect-api-starter-kit 目录，请确认已克隆仓库。"; return 1
+  fi
+  cd "$TARGET" || return 1
+  echo "进入目录：$(pwd)"
+  [ -f package-lock.json ] && npm ci || npm install
+  lsof -ti:3000 | xargs kill -9 2>/dev/null
+  lsof -ti:3001 | xargs kill -9 2>/dev/null
+  npm run demo:ecommerce
+}
+
+# 使配置生效（添加后执行一次）
+source ~/.zshrc</pre></div>
+        </div>
+        <div class="step">
           <div class="title">8) .env 位置再次强调（最常见问题）</div>
           <p class="muted small">.env 必须在 <span class="code">CanvaAPI-Demo/canva-connect-api-starter-kit/.env</span>，不是 <span class="code">demos/ecommerce_shop/.env</span>。缺少或位置错误会导致授权失败或端口配置不生效。</p>
         </div>
