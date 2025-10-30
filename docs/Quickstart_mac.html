@@ -45,6 +45,25 @@
 
       <p class="muted">本页可直接“文件 → 打印 → 存储为 PDF”导出为 PDF 分享。</p>
 
+      <h2>零、成功部署后的快速启动（TL;DR）</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="title">A) 已配置 canva-start（推荐）</div>
+          <div class="block"><code>canva-start</code></div>
+          <p class="muted small">已在第 5 章 7.2 配置过后，后续只需这一条命令。</p>
+        </div>
+        <div class="step">
+          <div class="title">B) 一次性粘贴启动（与路径无关）</div>
+          <div class="block small"><pre style="margin:0;white-space:pre-wrap;">TARGET="$(find "$HOME" -type d -name canva-connect-api-starter-kit 2>/dev/null | head -n1)" \\
+  && cd "$TARGET" \\
+  || { echo "未找到 canva-connect-api-starter-kit 目录"; exit 1; }
+[ -f package-lock.json ] && npm ci || npm install
+lsof -ti:3000 | xargs kill -9 2>/dev/null
+lsof -ti:3001 | xargs kill -9 2>/dev/null
+npm run demo:ecommerce</pre></div>
+        </div>
+      </div>
+
       <h2>一、安装必备软件（一次即可）</h2>
       <div class="steps">
         <div class="step">
@@ -82,7 +101,7 @@ npm -v</pre></div>
         </div>
       </div>
 
-      <h2>二、获取代码并一键启动</h2>
+      <h2>二、获取代码（HTTPS 或 SSH 二选一）</h2>
       <div class="steps">
         <div class="step">
           <div class="title">3A) 公有仓库 · HTTPS 快速克隆（无需 GitHub 账号）</div>
@@ -117,13 +136,13 @@ git clone https://github.com/MumuIs/CanvaAPI-Demo.git
 cd CanvaAPI-Demo</pre></div>
         </div>
         <div class="step">
-          <div class="title">4) 赋予脚本权限 & 一键启动</div>
+          <div class="title">4) 赋予脚本权限 & 首次初始化</div>
           <div class="block"><code>chmod +x ./bootstrap.sh<br/>./bootstrap.sh</code></div>
-          <p class="muted small">首次若未检测到 <span class="code">.env</span>，脚本会自动生成模板并退出，请先填写后再次运行脚本。</p>
+          <p class="muted small">若未检测到 <span class="code">.env</span>，脚本会自动生成模板并退出，请先到第 3 章补齐配置后再运行。</p>
         </div>
       </div>
 
-      <h2>三、填写 .env（仅首次）</h2>
+      <h2>三、填写 .env（仅首次必做）</h2>
       <div class="step">
         <p><strong style="color:#d32f2f;">⚠️ 重要：.env 文件位置必须正确</strong></p>
         <p>正确路径：<span class="code" style="background-color:#fff3cd;padding:2px 6px;font-weight:600;">CanvaAPI-Demo/canva-connect-api-starter-kit/.env</span></p>
@@ -139,7 +158,7 @@ cd CanvaAPI-Demo</pre></div>
             <div class="block"><code>cd ~/CanvaAPI-Demo<br/>open -e canva-connect-api-starter-kit/.env</code></div>
           </div>
         </div>
-        <p class="muted small">💡 小技巧：如果不确定打开的是否为正确文件，可以先执行 <span class="code">cd ~/CanvaAPI-Demo</span> 确保在项目根目录。</p>
+        <p class="muted small">💡 小技巧：先执行 <span class="code">cd ~/CanvaAPI-Demo</span> 保证在项目根，再打开上面路径。</p>
       </div>
         <p>把下列内容粘贴到 .env（替换为负责人提供的真实值；变量名需与源码校验一致，合计 8 项）：</p>
         <div class="block small"><pre style="margin:0;white-space:pre-wrap;">BACKEND_PORT=3001
@@ -152,11 +171,7 @@ CANVA_CLIENT_ID=粘贴完整的ClientId
 CANVA_CLIENT_SECRET=粘贴完整的ClientSecret
 
 DATABASE_ENCRYPTION_KEY=dev-encryption-key-32-chars-12345678</pre></div>
-        <p class="muted small">备注：
-          <br/>1) <span class="code">BASE_CANVA_CONNECT_API_URL</span> 不需要带 <span class="code">/v1</span>（代码会自动添加）；<span class="code">BASE_CANVA_CONNECT_AUTH_URL</span> 必须带 <span class="code">/api</span>（非中国区用 canva.com）
-          <br/>2) 首次运行 <span class="code">./bootstrap.sh</span> 若未检测到 <span class="code">.env</span>，将自动生成最小模板并退出，请先填写再重新运行脚本。
-          <br/>3) 负责人需在 Canva 应用后台配置回调 <span class="code">http://127.0.0.1:3001/oauth/redirect</span>。
-        </p>
+        <p class="muted small">备注：1) <span class="code">BASE_CANVA_CONNECT_API_URL</span> 不带 <span class="code">/v1</span>；2) <span class="code">BASE_CANVA_CONNECT_AUTH_URL</span> 需带 <span class="code">/api</span>；3) 负责人需在后台配置回调 <span class="code">http://127.0.0.1:3001/oauth/redirect</span>。</p>
       </div>
 
       <h2>四、.env 配置验证（首次必做）</h2>
