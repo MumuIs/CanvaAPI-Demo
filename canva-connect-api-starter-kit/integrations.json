@@ -1,0 +1,16 @@
+{
+  "integrations": {
+    "integration1": {
+      "name": "原始集成",
+      "CANVA_CLIENT_ID": "请替换为原始 Client ID",
+      "CANVA_CLIENT_SECRET": "请替换为原始 Client Secret"
+    },
+    "integration2": {
+      "name": "本地测试集成",
+      "CANVA_CLIENT_ID": "请替换为本地测试 Client ID",
+      "CANVA_CLIENT_SECRET": "请替换为本地测试 Client Secret"
+    }
+  },
+  "current": "integration2"
+}
+

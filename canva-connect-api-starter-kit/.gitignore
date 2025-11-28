@@ -3,6 +3,7 @@
 .ssl
 .DS_Store
 .env
+.env.backup
 node_modules
 .pr-train.yml
 yarn-error.log
