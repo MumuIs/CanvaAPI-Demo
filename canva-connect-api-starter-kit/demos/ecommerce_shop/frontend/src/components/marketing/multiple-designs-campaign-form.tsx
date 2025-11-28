@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { BrandTemplate } from "@canva/connect-api-ts/types.gen";
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   BrandTemplateSelectionModal,
   BrandTemplatesStack,
@@ -16,10 +17,16 @@ import { useAppContext, useCampaignContext } from "src/context";
 export const MultipleDesignsCampaignForm = ({
   isLoading,
   brandTemplates,
+  isFetching,
+  searchQuery,
+  onSearchChange,
   onCreate,
 }: {
   isLoading: boolean;
   brandTemplates: BrandTemplate[];
+  isFetching?: boolean;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
   onCreate: () => void;
 }) => {
   const { selectedCampaignProduct } = useAppContext();
@@ -32,18 +39,34 @@ export const MultipleDesignsCampaignForm = ({
       <FormPaper>
         <Stack spacing={4} marginBottom={4}>
           <Typography variant="h5" marginBottom={4}>
-            Select product details
+            选择商品信息
           </Typography>
           <SingleProductSelector disabled={isLoading} />
           <DiscountSelector disabled={isLoading} />
         </Stack>
       </FormPaper>
       <FormPaper>
-        <Typography variant="h5">Select brand templates</Typography>
+        <Typography variant="h5">选择品牌模板</Typography>
         <Typography variant="body2" marginBottom={2}>
-          These templates will be used to create Canva designs featuring the
-          product details
+          这些模板将用于创建包含商品信息的 Canva 设计。默认仅显示支持自动填充的模板。
         </Typography>
+        {onSearchChange && (
+          <TextField
+            fullWidth
+            placeholder="搜索模板..."
+            value={searchQuery || ""}
+            onChange={(e) => onSearchChange(e.target.value)}
+            disabled={isLoading || isFetching}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ marginBottom: 2 }}
+          />
+        )}
         {selectedBrandTemplates.length ? (
           <Stack spacing={2}>
             <BrandTemplatesStack />
@@ -51,10 +74,10 @@ export const MultipleDesignsCampaignForm = ({
               demoVariant="secondary"
               startIcon={<CanvaIcon />}
               onClick={() => setIsOpen(true)}
-              disabled={!selectedCampaignProduct || isLoading}
+              disabled={!selectedCampaignProduct || isLoading || isFetching}
               fullWidth={true}
             >
-              EDIT SELECTION
+              编辑选择
             </DemoButton>
             <DemoButton
               demoVariant="primary"
@@ -64,7 +87,7 @@ export const MultipleDesignsCampaignForm = ({
               startIcon={<CanvaIcon />}
               fullWidth={true}
             >
-              GENERATE CANVA DESIGNS
+              生成 Canva 设计
             </DemoButton>
           </Stack>
         ) : (
@@ -72,11 +95,11 @@ export const MultipleDesignsCampaignForm = ({
             demoVariant="secondary"
             startIcon={<CanvaIcon />}
             onClick={() => setIsOpen(true)}
-            disabled={!selectedCampaignProduct}
-            loading={!brandTemplates.length}
+            disabled={!selectedCampaignProduct || isFetching}
+            loading={isFetching}
             fullWidth={true}
           >
-            TEMPLATE SELECTION
+            选择模板
           </DemoButton>
         )}
       </FormPaper>

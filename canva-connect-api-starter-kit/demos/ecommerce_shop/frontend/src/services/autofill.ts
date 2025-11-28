@@ -12,6 +12,18 @@ import type { Client } from "@hey-api/client-fetch";
 import { AutofillService, BrandTemplateService } from "@canva/connect-api-ts";
 import type { Assets } from "./asset";
 
+/**
+ * Field mapping configuration for autofill.
+ * Maps template field names to product data or custom values.
+ */
+export type FieldMapping = {
+  templateFieldName: string; // The field name in the template dataset
+  fieldType: "text" | "image" | "chart";
+  value?: string | { asset_id: string }; // For text: string, for image: { asset_id: string }
+  source?: "product" | "discount" | "custom"; // Where the value comes from
+  productField?: "name" | "price" | "image"; // If source is "product", which product field
+};
+
 export class Autofill {
   private static requiredPromoAutofillData = ["name", "image", "price"];
 
@@ -20,9 +32,25 @@ export class Autofill {
     private assets: Assets,
   ) {}
 
-  async listBrandTemplates(): Promise<BrandTemplate[]> {
+  /**
+   * Lists brand templates with optional filtering and search.
+   * @param {Object} options - The options object.
+   * @param {string} options.query - Optional search query to filter templates by name.
+   * @param {"any" | "non_empty"} options.datasetFilter - Filter templates by dataset presence. Defaults to "non_empty" to show only templates with autofill support.
+   * @returns {Promise<BrandTemplate[]>} A promise that resolves with the list of brand templates.
+   */
+  async listBrandTemplates(options?: {
+    query?: string;
+    datasetFilter?: "any" | "non_empty";
+  }): Promise<BrandTemplate[]> {
+    const { query, datasetFilter = "non_empty" } = options || {};
+    
     const result = await BrandTemplateService.listBrandTemplates({
       client: this.client,
+      query: {
+        query,
+        dataset: datasetFilter,
+      },
     });
 
     if (result.error) {
@@ -37,6 +65,8 @@ export class Autofill {
       const nextResult = await BrandTemplateService.listBrandTemplates({
         client: this.client,
         query: {
+          query,
+          dataset: datasetFilter,
           continuation,
         },
       });
@@ -54,7 +84,63 @@ export class Autofill {
   }
 
   /**
-   * Auto-fills a brand template with product data.
+   * Auto-fills a brand template with custom field mappings.
+   * @param {Object} options - The options object.
+   * @param {string} options.brandTemplateId - The ID of the brand template to autofill.
+   * @param {FieldMapping[]} options.fieldMappings - Custom field mappings for the template.
+   * @returns {Promise<GetDesignAutofillJobResponse>} A promise that resolves with the autofill job response.
+   */
+  async autoFillTemplateWithMappings({
+    brandTemplateId,
+    fieldMappings,
+  }: {
+    brandTemplateId: string;
+    fieldMappings: FieldMapping[];
+  }): Promise<GetDesignAutofillJobResponse> {
+    try {
+      // Validate that we have mappings
+      if (!fieldMappings || fieldMappings.length === 0) {
+        throw new Error("至少需要一个字段映射");
+      }
+
+      // Construct autofill data from mappings
+      const autofillData: Dataset = {};
+      
+      for (const mapping of fieldMappings) {
+        if (!mapping.value) {
+          throw new Error(`字段 "${mapping.templateFieldName}" 缺少值`);
+        }
+
+        if (mapping.fieldType === "image") {
+          autofillData[mapping.templateFieldName] = {
+            type: "image",
+            asset_id: typeof mapping.value === "object" ? mapping.value.asset_id : mapping.value,
+          };
+        } else if (mapping.fieldType === "text") {
+          autofillData[mapping.templateFieldName] = {
+            type: "text",
+            text: typeof mapping.value === "string" ? mapping.value : String(mapping.value),
+          };
+        } else if (mapping.fieldType === "chart") {
+          // Chart type not supported in this demo, but structure is here for future use
+          throw new Error(`图表类型字段暂不支持`);
+        }
+      }
+
+      const autofillJobResponse = await this.postAutofill(
+        brandTemplateId,
+        autofillData,
+      );
+
+      return poll(() => this.getAutofillJobStatus(autofillJobResponse.job.id));
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Auto-fills a brand template with product data (legacy method, maintains backward compatibility).
    * @param {Object} options - The options object.
    * @param {string} options.brandTemplateId - The ID of the brand template to autofill.
    * @param {Product} options.product - The product data to autofill.
@@ -227,7 +313,7 @@ export class Autofill {
 
   private async postAutofill(
     brandTemplateId: string,
-    autofillData: ProductAutofillDataset,
+    autofillData: Dataset | ProductAutofillDataset,
   ): Promise<GetDesignAutofillJobResponse> {
     const body: CreateDesignAutofillJobRequest = {
       data: autofillData,

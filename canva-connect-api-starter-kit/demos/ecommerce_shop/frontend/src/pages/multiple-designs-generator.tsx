@@ -28,6 +28,7 @@ export const MultipleDesignsGeneratorPage = () => {
   } = useCampaignContext();
   const [brandTemplates, setBrandTemplates] = useState<BrandTemplate[]>([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [progress, setProgress] = useState<number>();
   const [loadingModalIsOpen, setLoadingModalIsOpen] = useState(false);
   const [publishDialogIsOpen, setPublishDialogIsOpen] = useState(false);
@@ -37,18 +38,31 @@ export const MultipleDesignsGeneratorPage = () => {
     const fetchData = async () => {
       try {
         setIsFetching(true);
-        const items = await services.autofill.listBrandTemplates();
+        // 默认只显示支持自动填充的模板（有 dataset 的模板）
+        const items = await services.autofill.listBrandTemplates({
+          query: searchQuery || undefined,
+          datasetFilter: "non_empty",
+        });
         setBrandTemplates(items);
       } catch {
         addAlert({
-          title: "Something went wrong fetching your brand templates.",
+          title: "获取品牌模板失败",
           variant: "error",
         });
       } finally {
         setIsFetching(false);
       }
     };
-    fetchData();
+    
+    // 防抖搜索
+    const timeoutId = setTimeout(() => {
+      fetchData();
+    }, searchQuery ? 300 : 0);
+    
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  useEffect(() => {
     setSelectedBrandTemplates([]);
   }, []);
 
@@ -245,8 +259,8 @@ export const MultipleDesignsGeneratorPage = () => {
   return (
     <Grid container={true} spacing={3} marginBottom={4}>
       <PageDescriptor
-        title="批量设计"
-        description="将商品添加到品牌模板，一次性创建多个设计"
+        title="自动填充"
+        description="选择支持自动填充的品牌模板，将商品信息填充到模板中，批量生成设计"
       />
       <Grid item={true} xs={8}>
         {marketingMultiDesignResults.length ? (
@@ -269,6 +283,9 @@ export const MultipleDesignsGeneratorPage = () => {
           <MultipleDesignsCampaignForm
             isLoading={loadingModalIsOpen}
             brandTemplates={brandTemplates}
+            isFetching={isFetching}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
             onCreate={onCreate}
           />
         )}
