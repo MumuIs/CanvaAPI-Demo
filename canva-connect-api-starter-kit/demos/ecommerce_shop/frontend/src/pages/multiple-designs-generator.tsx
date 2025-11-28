@@ -139,13 +139,17 @@ export const MultipleDesignsGeneratorPage = () => {
 
       await Promise.all(
         results.map(async (result, index) => {
+          const template = selectedBrandTemplates[index];
+          const templateName = template?.title || template?.id || `模板 ${index + 1}`;
+          
           if (result.status === "rejected") {
             const errorMsg = result.reason instanceof Error 
               ? result.reason.message 
               : String(result.reason);
-            errors.push(`模板 ${index + 1} 创建失败: ${errorMsg}`);
+            const fullErrorMsg = `"${templateName}" 创建失败: ${errorMsg}`;
+            errors.push(fullErrorMsg);
             addAlert({
-              title: `模板 ${index + 1} 创建失败: ${errorMsg}`,
+              title: fullErrorMsg,
               variant: "error",
             });
             completedCount++;

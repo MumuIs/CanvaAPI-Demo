@@ -87,8 +87,9 @@ export class Autofill {
       const dataset = response.data.dataset;
 
       if (!Autofill.isDataSetCompatible(dataset)) {
+        const missingFields = Autofill.getMissingFields(dataset);
         throw new Error(
-          "Selected brand template cannot be used to create a promo due to missing data fields.",
+          `品牌模板缺少必要的数据字段，无法用于创建促销设计。缺少的字段：${missingFields.join(", ")}。必需字段：${Autofill.requiredPromoAutofillData.join(", ")}。`,
         );
       }
 
@@ -119,6 +120,17 @@ export class Autofill {
     dataSet: Required<GetBrandTemplateDatasetResponse>["dataset"],
   ): boolean {
     return Autofill.requiredPromoAutofillData.every((key) => key in dataSet);
+  }
+
+  /**
+   * Gets the list of missing required fields from a dataset.
+   * @param {Dataset} dataSet - The dataset to check.
+   * @returns {string[]} An array of missing field names.
+   */
+  private static getMissingFields(
+    dataSet: Required<GetBrandTemplateDatasetResponse>["dataset"],
+  ): string[] {
+    return Autofill.requiredPromoAutofillData.filter((key) => !(key in dataSet));
   }
 
   /**
