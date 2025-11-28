@@ -52,16 +52,71 @@ export const MultipleDesignsGeneratorPage = () => {
     setSelectedBrandTemplates([]);
   }, []);
 
-  const autofillSelectedBrandTemplates = async () => {
+  const onCreate = async () => {
+    const numberOfTemplates = selectedBrandTemplates.length;
+    const baseEstimatedTime = 8000; // base time regardless of number of templates
+    const additionalTimePerTemplate = 2000; // additional time per template
+    const estimatedTotalTime =
+      baseEstimatedTime + additionalTimePerTemplate * numberOfTemplates;
+
+    setLoadingModalIsOpen(true);
+    setProgress(0);
+
+    const startTime = Date.now();
+    let completedTasks = 0;
+
+    // 创建一个进度更新函数，基于实际完成的任务数
+    const updateProgress = (completed: number) => {
+      completedTasks = completed;
+      // 结合实际完成数和估算时间来计算进度
+      const actualProgress = (completed / numberOfTemplates) * 90; // 90% 基于实际完成
+      const timeProgress = Math.min(
+        ((Date.now() - startTime) / estimatedTotalTime) * 10,
+        10
+      ); // 10% 基于时间
+      setProgress(Math.min(100, actualProgress + timeProgress));
+    };
+
+    // 定期更新进度（基于时间）
+    const intervalId = setInterval(() => {
+      const elapsedTime = Date.now() - startTime;
+      const timeProgress = Math.min((elapsedTime / estimatedTotalTime) * 100, 95);
+      const actualProgress = (completedTasks / numberOfTemplates) * 90;
+      setProgress(Math.min(100, actualProgress + Math.min(timeProgress * 0.1, 5)));
+    }, 200);
+
+    try {
+      // 修改 autofillSelectedBrandTemplates 以支持进度回调
+      await autofillSelectedBrandTemplatesWithProgress(updateProgress);
+    } catch (error) {
+      console.error(error);
+      addAlert({
+        title: "批量创建设计时出错",
+        variant: "error",
+      });
+    } finally {
+      clearInterval(intervalId);
+      setProgress(100); // 确保进度条到达 100%
+      // 短暂延迟后关闭对话框，让用户看到完成状态
+      setTimeout(() => {
+        setLoadingModalIsOpen(false);
+        setProgress(undefined);
+      }, 500);
+    }
+  };
+
+  const autofillSelectedBrandTemplatesWithProgress = async (
+    onProgress?: (completed: number) => void
+  ) => {
     try {
       if (!selectedCampaignProduct) {
-        addAlert({ title: "No product selected.", variant: "error" });
+        addAlert({ title: "未选择商品", variant: "error" });
         return;
       }
 
       if (!selectedBrandTemplates.length) {
         addAlert({
-          title: "No brand templates selected.",
+          title: "未选择品牌模板",
           variant: "error",
         });
         return;
@@ -77,93 +132,101 @@ export const MultipleDesignsGeneratorPage = () => {
 
       const results = await Promise.allSettled(autoFillPromises);
 
-      results.forEach(async (result) => {
-        if (result.status === "rejected") {
-          addAlert({
-            title: `Error creating design: ${result.reason}.`,
-            variant: "error",
-          });
-        } else if (result.status === "fulfilled") {
-          if (result.value.job.result?.design.id) {
-            const response = await services.designs.getDesign(
-              result.value.job.result.design.id,
-            );
-            const designWithThumb = {
-              ...response.design,
-              /**
-               * A design created from an autoFill request doesn't have a design.thumbnail,
-               * whereas the auto-fill job result does.  Falling back to the job result
-               * thumbnail where design thumbnail is undefined
-               */
-              thumbnail:
-                response.design.thumbnail ??
-                result.value.job.result?.design.thumbnail,
-            };
-            setMarketingMultiDesignResults((currentDesigns) => [
-              ...currentDesigns,
-              designWithThumb,
-            ]);
-            
-            // 保存到内容库
-            saveDesignToContentLibrary(designWithThumb);
+      // 处理所有结果，等待所有异步操作完成
+      const processedDesigns: typeof marketingMultiDesignResults = [];
+      const errors: string[] = [];
+      let completedCount = 0;
+
+      await Promise.all(
+        results.map(async (result, index) => {
+          if (result.status === "rejected") {
+            const errorMsg = result.reason instanceof Error 
+              ? result.reason.message 
+              : String(result.reason);
+            errors.push(`模板 ${index + 1} 创建失败: ${errorMsg}`);
+            addAlert({
+              title: `模板 ${index + 1} 创建失败: ${errorMsg}`,
+              variant: "error",
+            });
+            completedCount++;
+            onProgress?.(completedCount);
+          } else if (result.status === "fulfilled") {
+            try {
+              if (result.value.job.result?.design.id) {
+                const response = await services.designs.getDesign(
+                  result.value.job.result.design.id,
+                );
+                const designWithThumb = {
+                  ...response.design,
+                  /**
+                   * A design created from an autoFill request doesn't have a design.thumbnail,
+                   * whereas the auto-fill job result does.  Falling back to the job result
+                   * thumbnail where design thumbnail is undefined
+                   */
+                  thumbnail:
+                    response.design.thumbnail ??
+                    result.value.job.result?.design.thumbnail,
+                };
+                processedDesigns.push(designWithThumb);
+                
+                // 保存到内容库
+                saveDesignToContentLibrary(designWithThumb);
+              }
+              completedCount++;
+              onProgress?.(completedCount);
+            } catch (error) {
+              const errorMsg = error instanceof Error ? error.message : String(error);
+              errors.push(`获取设计详情失败: ${errorMsg}`);
+              console.error("Error getting design:", error);
+              completedCount++;
+              onProgress?.(completedCount);
+            }
           }
-        }
-      });
+        })
+      );
+
+      // 批量更新状态
+      if (processedDesigns.length > 0) {
+        setMarketingMultiDesignResults((currentDesigns) => [
+          ...currentDesigns,
+          ...processedDesigns,
+        ]);
+      }
 
       setIsFirstGenerated(true);
 
-      addAlert({
-        title:
-          results.filter((result) => result.status === "fulfilled").length === 1
-            ? "1 Canva design was generated"
-            : `${results.length} Canva designs were generated`,
-        variant: "success",
-        hideAfterMs: -1,
-      });
-    } catch (error) {
-      addAlert({
-        title: `Unexpected error: ${error}`,
-        variant: "error",
-      });
-    }
-  };
-
-  const onCreate = async () => {
-    const baseEstimatedTime = 8000; // base time regardless of number of templates
-    const additionalTimePerTemplate = 1000; // additional time per template
-
-    const numberOfTemplates = selectedBrandTemplates.length;
-    const estimatedTotalTime =
-      baseEstimatedTime + additionalTimePerTemplate * numberOfTemplates;
-
-    setLoadingModalIsOpen(true);
-    setProgress(0);
-
-    const startTime = Date.now();
-
-    const intervalId = setInterval(() => {
-      const elapsedTime = Date.now() - startTime;
-      const estimatedProgress = (elapsedTime / estimatedTotalTime) * 100;
-
-      setProgress(Math.min(100, estimatedProgress));
-
-      if (elapsedTime >= estimatedTotalTime) {
-        clearInterval(intervalId);
+      // 显示成功/失败消息
+      const successCount = processedDesigns.length;
+      const totalCount = selectedBrandTemplates.length;
+      
+      if (successCount === 0) {
+        addAlert({
+          title: "所有设计创建失败，请检查错误信息",
+          variant: "error",
+          hideAfterMs: -1,
+        });
+      } else if (successCount === totalCount) {
+        addAlert({
+          title:
+            successCount === 1
+              ? "1 个 Canva 设计已生成"
+              : `${successCount} 个 Canva 设计已生成`,
+          variant: "success",
+          hideAfterMs: -1,
+        });
+      } else {
+        addAlert({
+          title: `成功生成 ${successCount}/${totalCount} 个设计，${totalCount - successCount} 个失败`,
+          variant: "warning",
+          hideAfterMs: -1,
+        });
       }
-    }, 100);
-
-    try {
-      await autofillSelectedBrandTemplates();
     } catch (error) {
-      console.error(error);
+      console.error("Unexpected error in autofill:", error);
       addAlert({
-        title: "Error auto-filling template.",
+        title: `意外错误: ${error instanceof Error ? error.message : String(error)}`,
         variant: "error",
       });
-    } finally {
-      clearInterval(intervalId);
-      setLoadingModalIsOpen(false);
-      setProgress(undefined);
     }
   };
 
