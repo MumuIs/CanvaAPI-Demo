@@ -11,6 +11,7 @@ import {
 } from "src/components";
 import { useAppContext, useCampaignContext } from "src/context";
 import { saveDesignToContentLibrary } from "src/utils/content-library";
+import type { FieldMapping } from "src/services/autofill";
 
 export const MultipleDesignsGeneratorPage = () => {
   const {
@@ -33,6 +34,7 @@ export const MultipleDesignsGeneratorPage = () => {
   const [loadingModalIsOpen, setLoadingModalIsOpen] = useState(false);
   const [publishDialogIsOpen, setPublishDialogIsOpen] = useState(false);
   const [isFirstGenerated, setIsFirstGenerated] = useState(false);
+  const [fieldMappings, setFieldMappings] = useState<FieldMapping[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,7 +130,8 @@ export const MultipleDesignsGeneratorPage = () => {
         return;
       }
 
-      if (!selectedBrandTemplates.length) {
+      const selectedTemplate = selectedBrandTemplates[0];
+      if (!selectedTemplate) {
         addAlert({
           title: "未选择品牌模板",
           variant: "error",
@@ -136,72 +139,50 @@ export const MultipleDesignsGeneratorPage = () => {
         return;
       }
 
-      const autoFillPromises = selectedBrandTemplates.map((brandTemplate) =>
-        services.autofill.autoFillTemplateWithProduct({
-          brandTemplateId: brandTemplate.id,
-          product: selectedCampaignProduct,
-          discount: selectedDiscount,
-        }),
-      );
+      if (fieldMappings.length === 0) {
+        addAlert({
+          title: "请配置字段映射",
+          variant: "error",
+        });
+        return;
+      }
 
-      const results = await Promise.allSettled(autoFillPromises);
+      // 使用自定义字段映射
+      const result = await services.autofill.autoFillTemplateWithMappings({
+        brandTemplateId: selectedTemplate.id,
+        fieldMappings,
+      });
 
-      // 处理所有结果，等待所有异步操作完成
+      // 处理结果
       const processedDesigns: typeof marketingMultiDesignResults = [];
-      const errors: string[] = [];
       let completedCount = 0;
 
-      await Promise.all(
-        results.map(async (result, index) => {
-          const template = selectedBrandTemplates[index];
-          const templateName = template?.title || template?.id || `模板 ${index + 1}`;
-          
-          if (result.status === "rejected") {
-            const errorMsg = result.reason instanceof Error 
-              ? result.reason.message 
-              : String(result.reason);
-            const fullErrorMsg = `"${templateName}" 创建失败: ${errorMsg}`;
-            errors.push(fullErrorMsg);
-            addAlert({
-              title: fullErrorMsg,
-              variant: "error",
-            });
-            completedCount++;
-            onProgress?.(completedCount);
-          } else if (result.status === "fulfilled") {
-            try {
-              if (result.value.job.result?.design.id) {
-                const response = await services.designs.getDesign(
-                  result.value.job.result.design.id,
-                );
-                const designWithThumb = {
-                  ...response.design,
-                  /**
-                   * A design created from an autoFill request doesn't have a design.thumbnail,
-                   * whereas the auto-fill job result does.  Falling back to the job result
-                   * thumbnail where design thumbnail is undefined
-                   */
-                  thumbnail:
-                    response.design.thumbnail ??
-                    result.value.job.result?.design.thumbnail,
-                };
-                processedDesigns.push(designWithThumb);
-                
-                // 保存到内容库
-                saveDesignToContentLibrary(designWithThumb);
-              }
-              completedCount++;
-              onProgress?.(completedCount);
-            } catch (error) {
-              const errorMsg = error instanceof Error ? error.message : String(error);
-              errors.push(`获取设计详情失败: ${errorMsg}`);
-              console.error("Error getting design:", error);
-              completedCount++;
-              onProgress?.(completedCount);
-            }
-          }
-        })
-      );
+      try {
+        if (result.job.result?.design.id) {
+          const response = await services.designs.getDesign(
+            result.job.result.design.id,
+          );
+          const designWithThumb = {
+            ...response.design,
+            thumbnail:
+              response.design.thumbnail ??
+              result.job.result?.design.thumbnail,
+          };
+          processedDesigns.push(designWithThumb);
+          saveDesignToContentLibrary(designWithThumb);
+        }
+        completedCount = 1;
+        onProgress?.(completedCount);
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        addAlert({
+          title: `获取设计详情失败: ${errorMsg}`,
+          variant: "error",
+        });
+        completedCount = 1;
+        onProgress?.(completedCount);
+      }
+
 
       // 批量更新状态
       if (processedDesigns.length > 0) {
@@ -214,28 +195,16 @@ export const MultipleDesignsGeneratorPage = () => {
       setIsFirstGenerated(true);
 
       // 显示成功/失败消息
-      const successCount = processedDesigns.length;
-      const totalCount = selectedBrandTemplates.length;
-      
-      if (successCount === 0) {
+      if (processedDesigns.length === 0) {
         addAlert({
-          title: "所有设计创建失败，请检查错误信息",
+          title: "设计创建失败，请检查错误信息",
           variant: "error",
-          hideAfterMs: -1,
-        });
-      } else if (successCount === totalCount) {
-        addAlert({
-          title:
-            successCount === 1
-              ? "1 个 Canva 设计已生成"
-              : `${successCount} 个 Canva 设计已生成`,
-          variant: "success",
           hideAfterMs: -1,
         });
       } else {
         addAlert({
-          title: `成功生成 ${successCount}/${totalCount} 个设计，${totalCount - successCount} 个失败`,
-          variant: "warning",
+          title: "Canva 设计已生成",
+          variant: "success",
           hideAfterMs: -1,
         });
       }
@@ -286,6 +255,8 @@ export const MultipleDesignsGeneratorPage = () => {
             isFetching={isFetching}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
+            fieldMappings={fieldMappings}
+            onFieldMappingsChange={setFieldMappings}
             onCreate={onCreate}
           />
         )}

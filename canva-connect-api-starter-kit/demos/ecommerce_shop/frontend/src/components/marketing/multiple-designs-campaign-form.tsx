@@ -1,18 +1,19 @@
 import { useState } from "react";
 import type { BrandTemplate } from "@canva/connect-api-ts/types.gen";
-import { Stack, Typography, TextField, InputAdornment } from "@mui/material";
+import { Stack, Typography, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   BrandTemplateSelectionModal,
-  BrandTemplatesStack,
   CampaignNameInput,
   CanvaIcon,
   DemoButton,
   DiscountSelector,
   FormPaper,
   SingleProductSelector,
+  FieldMappingForm,
 } from "src/components";
 import { useAppContext, useCampaignContext } from "src/context";
+import type { FieldMapping } from "src/services/autofill";
 
 export const MultipleDesignsCampaignForm = ({
   isLoading,
@@ -20,6 +21,8 @@ export const MultipleDesignsCampaignForm = ({
   isFetching,
   searchQuery,
   onSearchChange,
+  fieldMappings,
+  onFieldMappingsChange,
   onCreate,
 }: {
   isLoading: boolean;
@@ -27,11 +30,16 @@ export const MultipleDesignsCampaignForm = ({
   isFetching?: boolean;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
+  fieldMappings: FieldMapping[];
+  onFieldMappingsChange: (mappings: FieldMapping[]) => void;
   onCreate: () => void;
 }) => {
   const { selectedCampaignProduct } = useAppContext();
-  const { campaignName, selectedBrandTemplates } = useCampaignContext();
+  const { campaignName, selectedBrandTemplates, selectedDiscount, setSelectedBrandTemplates } = useCampaignContext();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // 单选模板，只取第一个
+  const selectedTemplate = selectedBrandTemplates[0] || null;
 
   return (
     <Stack spacing={4}>
@@ -48,7 +56,7 @@ export const MultipleDesignsCampaignForm = ({
       <FormPaper>
         <Typography variant="h5">选择品牌模板</Typography>
         <Typography variant="body2" marginBottom={2}>
-          这些模板将用于创建包含商品信息的 Canva 设计。默认仅显示支持自动填充的模板。
+          选择一个支持自动填充的模板。选择后，您可以为每个字段配置数据源。
         </Typography>
         {onSearchChange && (
           <TextField
@@ -67,29 +75,24 @@ export const MultipleDesignsCampaignForm = ({
             sx={{ marginBottom: 2 }}
           />
         )}
-        {selectedBrandTemplates.length ? (
-          <Stack spacing={2}>
-            <BrandTemplatesStack />
+        {selectedTemplate ? (
+          <Box marginBottom={2}>
+            <Chip
+              label={selectedTemplate.title}
+              onDelete={() => setSelectedBrandTemplates([])}
+              color="primary"
+              sx={{ marginBottom: 2 }}
+            />
             <DemoButton
               demoVariant="secondary"
               startIcon={<CanvaIcon />}
               onClick={() => setIsOpen(true)}
-              disabled={!selectedCampaignProduct || isLoading || isFetching}
+              disabled={isLoading || isFetching}
               fullWidth={true}
             >
-              编辑选择
+              更换模板
             </DemoButton>
-            <DemoButton
-              demoVariant="primary"
-              onClick={onCreate}
-              disabled={!selectedCampaignProduct || !campaignName}
-              loading={isLoading}
-              startIcon={<CanvaIcon />}
-              fullWidth={true}
-            >
-              生成 Canva 设计
-            </DemoButton>
-          </Stack>
+          </Box>
         ) : (
           <DemoButton
             demoVariant="secondary"
@@ -103,10 +106,35 @@ export const MultipleDesignsCampaignForm = ({
           </DemoButton>
         )}
       </FormPaper>
+      
+      {selectedTemplate && (
+        <FieldMappingForm
+          brandTemplate={selectedTemplate}
+          fieldMappings={fieldMappings}
+          onFieldMappingsChange={onFieldMappingsChange}
+          discount={selectedDiscount}
+        />
+      )}
+      
+      {selectedTemplate && fieldMappings.length > 0 && (
+        <FormPaper>
+          <DemoButton
+            demoVariant="primary"
+            onClick={onCreate}
+            disabled={!selectedCampaignProduct || !campaignName || fieldMappings.length === 0}
+            loading={isLoading}
+            startIcon={<CanvaIcon />}
+            fullWidth={true}
+          >
+            生成 Canva 设计
+          </DemoButton>
+        </FormPaper>
+      )}
       <BrandTemplateSelectionModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         brandTemplates={brandTemplates}
+        singleSelect={true}
       />
     </Stack>
   );

@@ -4,6 +4,7 @@ export * from "./brand-template-selector";
 export * from "./brand-template-stack";
 export * from "./campaign-name-input";
 export * from "./discount-selector";
+export * from "./field-mapping-form";
 export * from "./form-paper";
 export * from "./generating-designs-dialog";
 export * from "./multiple-designs-campaign-form";

@@ -17,30 +17,49 @@ import { useCampaignContext } from "src/context";
 export const BrandTemplateSelector = ({
   onClose,
   brandTemplates,
+  singleSelect = false,
 }: {
   onClose: () => void;
   brandTemplates: BrandTemplate[];
+  singleSelect?: boolean;
 }) => {
   const { selectedBrandTemplates, setSelectedBrandTemplates } =
     useCampaignContext();
   const [brandTemplateSet, setBrandTemplateSet] = useState<Set<BrandTemplate>>(
     new Set(selectedBrandTemplates),
   );
+  const [selectedSingleTemplate, setSelectedSingleTemplate] = useState<BrandTemplate | null>(
+    singleSelect ? (selectedBrandTemplates[0] || null) : null
+  );
 
   const handleSelectBrandTemplate = (brandTemplate: BrandTemplate) => {
-    setBrandTemplateSet((prevSelected) => {
-      const currentlySelected = new Set(prevSelected);
-      if (currentlySelected.has(brandTemplate)) {
-        currentlySelected.delete(brandTemplate);
+    if (singleSelect) {
+      // 单选模式：如果点击已选中的模板，则取消选择；否则选择新模板
+      if (selectedSingleTemplate?.id === brandTemplate.id) {
+        setSelectedSingleTemplate(null);
       } else {
-        currentlySelected.add(brandTemplate);
+        setSelectedSingleTemplate(brandTemplate);
       }
-      return currentlySelected;
-    });
+    } else {
+      // 多选模式
+      setBrandTemplateSet((prevSelected) => {
+        const currentlySelected = new Set(prevSelected);
+        if (currentlySelected.has(brandTemplate)) {
+          currentlySelected.delete(brandTemplate);
+        } else {
+          currentlySelected.add(brandTemplate);
+        }
+        return currentlySelected;
+      });
+    }
   };
 
   const handleUseTemplates = () => {
-    setSelectedBrandTemplates(Array.from(brandTemplateSet));
+    if (singleSelect) {
+      setSelectedBrandTemplates(selectedSingleTemplate ? [selectedSingleTemplate] : []);
+    } else {
+      setSelectedBrandTemplates(Array.from(brandTemplateSet));
+    }
     onClose();
   };
 
@@ -89,6 +108,8 @@ export const BrandTemplateSelector = ({
               key={brandTemplate.id}
               brandTemplate={brandTemplate}
               brandTemplateSet={brandTemplateSet}
+              selectedSingleTemplate={selectedSingleTemplate}
+              singleSelect={singleSelect}
               handleSelectBrandTemplate={handleSelectBrandTemplate}
             />
           ))
@@ -114,9 +135,11 @@ export const BrandTemplateSelector = ({
               demoVariant="primary"
               fullWidth={true}
               onClick={handleUseTemplates}
-              disabled={brandTemplateSet.size === 0}
+              disabled={singleSelect ? !selectedSingleTemplate : brandTemplateSet.size === 0}
             >
-              {`USE TEMPLATE` + (brandTemplateSet.size > 1 ? "S" : "")}
+              {singleSelect 
+                ? "使用模板"
+                : `USE TEMPLATE` + (brandTemplateSet.size > 1 ? "S" : "")}
             </DemoButton>
           </Stack>
         </Box>
@@ -159,54 +182,64 @@ const EmptyState = ({ onClose }: { onClose: () => void }) => (
 const BrandTemplateCard = ({
   brandTemplate,
   brandTemplateSet,
+  selectedSingleTemplate,
+  singleSelect,
   handleSelectBrandTemplate,
 }: {
   brandTemplate: BrandTemplate;
   brandTemplateSet: Set<BrandTemplate>;
+  selectedSingleTemplate: BrandTemplate | null;
+  singleSelect: boolean;
   handleSelectBrandTemplate: (brandTemplate: BrandTemplate) => void;
-}) => (
-  <Grid item={true} xs={12} sm={6} md={4} lg={4}>
-    <Paper
-      variant="outlined"
-      sx={{
-        position: "relative",
-        borderRadius: 1,
-        paddingX: 2,
-        paddingTop: 6,
-        bgcolor: "black",
-        border: (theme) =>
-          brandTemplateSet.has(brandTemplate)
-            ? `2px solid ${theme.palette.success.main}`
-            : "2px solid transparent",
-        "&:hover": {
-          opacity: 0.8,
-          cursor: "pointer",
-        },
-      }}
-      onClick={() => handleSelectBrandTemplate(brandTemplate)}
-    >
-      <Stack spacing={2}>
-        <CardMedia
-          component="img"
-          image={
-            brandTemplate.thumbnail?.url ||
-            "https://placehold.co/200x200/000000/FFF"
-          }
-          alt={`${brandTemplate.title}-image`}
-          height="200"
-          sx={{ objectFit: "contain", bgColor: "black" }}
-        />
-        <Typography variant="h6">{brandTemplate.title}</Typography>
-      </Stack>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={brandTemplateSet.has(brandTemplate)}
-            sx={{ position: "absolute", top: 8, left: 8 }}
+}) => {
+  const isSelected = singleSelect 
+    ? selectedSingleTemplate?.id === brandTemplate.id
+    : brandTemplateSet.has(brandTemplate);
+  
+  return (
+    <Grid item={true} xs={12} sm={6} md={4} lg={4}>
+      <Paper
+        variant="outlined"
+        sx={{
+          position: "relative",
+          borderRadius: 1,
+          paddingX: 2,
+          paddingTop: 6,
+          bgcolor: "black",
+          border: (theme) =>
+            isSelected
+              ? `2px solid ${theme.palette.success.main}`
+              : "2px solid transparent",
+          "&:hover": {
+            opacity: 0.8,
+            cursor: "pointer",
+          },
+        }}
+        onClick={() => handleSelectBrandTemplate(brandTemplate)}
+      >
+        <Stack spacing={2}>
+          <CardMedia
+            component="img"
+            image={
+              brandTemplate.thumbnail?.url ||
+              "https://placehold.co/200x200/000000/FFF"
+            }
+            alt={`${brandTemplate.title}-image`}
+            height="200"
+            sx={{ objectFit: "contain", bgColor: "black" }}
           />
-        }
-        label=""
-      />
-    </Paper>
-  </Grid>
-);
+          <Typography variant="h6">{brandTemplate.title}</Typography>
+        </Stack>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isSelected}
+              sx={{ position: "absolute", top: 8, left: 8 }}
+            />
+          }
+          label=""
+        />
+      </Paper>
+    </Grid>
+  );
+};

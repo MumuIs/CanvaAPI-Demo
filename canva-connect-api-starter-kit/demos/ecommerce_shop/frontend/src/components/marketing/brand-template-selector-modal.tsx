@@ -17,10 +17,12 @@ export const BrandTemplateSelectionModal = ({
   isOpen,
   setIsOpen,
   brandTemplates,
+  singleSelect = false,
 }: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   brandTemplates: BrandTemplate[];
+  singleSelect?: boolean;
 }) => (
   <Dialog
     maxWidth="xl"
@@ -33,6 +35,7 @@ export const BrandTemplateSelectionModal = ({
     <BrandTemplateSelector
       onClose={() => setIsOpen(false)}
       brandTemplates={brandTemplates}
+      singleSelect={singleSelect}
     />
   </Dialog>
 );
