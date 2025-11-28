@@ -88,8 +88,16 @@ export class Autofill {
 
       if (!Autofill.isDataSetCompatible(dataset)) {
         const missingFields = Autofill.getMissingFields(dataset);
+        const availableFields = Object.keys(dataset).map(fieldName => {
+          const fieldData = dataset[fieldName];
+          return `${fieldName} (${fieldData.type || "unknown"})`;
+        });
+        
         throw new Error(
-          `品牌模板缺少必要的数据字段，无法用于创建促销设计。缺少的字段：${missingFields.join(", ")}。必需字段：${Autofill.requiredPromoAutofillData.join(", ")}。`,
+          `品牌模板缺少必要的数据字段，无法用于创建促销设计。\n` +
+          `缺少的字段：${missingFields.join(", ")}\n` +
+          `必需字段：${Autofill.requiredPromoAutofillData.join(", ")}\n` +
+          `模板包含的字段：${availableFields.length > 0 ? availableFields.join(", ") : "无"}`,
         );
       }
 
@@ -131,6 +139,40 @@ export class Autofill {
     dataSet: Required<GetBrandTemplateDatasetResponse>["dataset"],
   ): string[] {
     return Autofill.requiredPromoAutofillData.filter((key) => !(key in dataSet));
+  }
+
+  /**
+   * Gets the dataset fields for a brand template.
+   * @param {string} brandTemplateId - The ID of the brand template.
+   * @returns {Promise<{fieldName: string, fieldType: string}[]>} A promise that resolves with an array of field information.
+   */
+  async getBrandTemplateFields(brandTemplateId: string): Promise<Array<{fieldName: string; fieldType: string}>> {
+    try {
+      const response = await BrandTemplateService.getBrandTemplateDataset({
+        client: this.client,
+        path: {
+          brandTemplateId,
+        },
+      });
+      
+      if (response.error) {
+        console.error(response.error);
+        throw new Error(response.error.message);
+      }
+      
+      if (!response.data || !response.data.dataset) {
+        return [];
+      }
+      
+      const dataset = response.data.dataset;
+      return Object.entries(dataset).map(([fieldName, fieldData]) => ({
+        fieldName,
+        fieldType: fieldData.type || "unknown",
+      }));
+    } catch (error) {
+      console.error("Error getting brand template fields:", error);
+      throw error;
+    }
   }
 
   /**
